@@ -1,0 +1,21 @@
+{
+  "name": "xelement-todos",
+  "homepage": "https://github.com/bpander/xelement-todos",
+  "authors": [
+    "Brad Anderson <brad.anderson87@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "xelement": "git://github.com/bpander/xelement.git#0.0.1"
+  }
+}

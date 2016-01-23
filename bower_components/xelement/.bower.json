@@ -1,0 +1,35 @@
+{
+  "name": "xelement",
+  "homepage": "https://github.com/banderso-n/xelement",
+  "authors": [
+    "Brad Anderson <banderso@nerdery.com>"
+  ],
+  "description": "",
+  "main": "XElement.js",
+  "moduleType": [],
+  "license": "BSD",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests",
+    "src"
+  ],
+  "devDependencies": {
+    "requirejs": "2.1.22",
+    "webcomponentsjs": "0.7.20",
+    "matchMedia": "matchmedia#0.3.0"
+  },
+  "version": "0.0.1",
+  "_release": "0.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.1",
+    "commit": "7980e52338ce644629745deb8da9d771348afc43"
+  },
+  "_source": "git://github.com/bpander/xelement.git",
+  "_target": "~0.0.1",
+  "_originalSource": "git://github.com/bpander/xelement.git",
+  "_direct": true
+}
