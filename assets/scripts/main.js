@@ -1,0 +1,8 @@
+require([
+    'ComponentManifest'
+], function (
+    ComponentManifest
+) {
+
+
+});

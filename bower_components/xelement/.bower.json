@@ -14,22 +14,22 @@
     "bower_components",
     "test",
     "tests",
-    "src"
+    "src",
+    "Gruntfile.js"
   ],
   "devDependencies": {
     "requirejs": "2.1.22",
     "webcomponentsjs": "0.7.20",
     "matchMedia": "matchmedia#0.3.0"
   },
-  "version": "0.0.1",
-  "_release": "0.0.1",
+  "version": "0.1.0",
+  "_release": "0.1.0",
   "_resolution": {
     "type": "version",
-    "tag": "0.0.1",
-    "commit": "7980e52338ce644629745deb8da9d771348afc43"
+    "tag": "0.1.0",
+    "commit": "f58376b51e2200cde4f86e74aff84c80590dd5d8"
   },
   "_source": "git://github.com/bpander/xelement.git",
-  "_target": "~0.0.1",
-  "_originalSource": "git://github.com/bpander/xelement.git",
-  "_direct": true
+  "_target": "0.1.0",
+  "_originalSource": "git://github.com/bpander/xelement.git"
 }

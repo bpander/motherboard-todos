@@ -323,11 +323,11 @@ XElementjs = function (XElementMixin, AttrDef) {
     return new AttrDef(name, params);
   };
   XElement.define = function (customTagName, definition) {
-    var base = HTMLElement.prototype;
+    var constructor = HTMLElement;
+    var base = Object.assign(Object.create(constructor.prototype), XElementMixin);
     var prototype = Object.create(base);
-    Object.assign(prototype, XElementMixin);
     Object.defineProperty(prototype, 'selector', { value: customTagName });
-    definition(prototype, XElementMixin, base);
+    definition(prototype, base);
     return _register(customTagName, { prototype: prototype });
   };
   XElement.extend = function () {
@@ -337,11 +337,11 @@ XElementjs = function (XElementMixin, AttrDef) {
     return _extendCustom.apply(this, arguments);
   };
   var _extendNative = function (tagName, customTagName, definition) {
-    var base = document.createElement(tagName).constructor.prototype;
+    var constructor = document.createElement(tagName).constructor;
+    var base = Object.assign(Object.create(constructor.prototype), XElementMixin);
     var prototype = Object.create(base);
-    Object.assign(prototype, XElementMixin);
     Object.defineProperty(prototype, 'selector', { value: tagName + '[is="' + customTagName + '"]' });
-    definition(prototype, XElementMixin, base);
+    definition(prototype, base);
     return _register(customTagName, {
       prototype: prototype,
       extends: tagName
@@ -361,7 +361,7 @@ XElementjs = function (XElementMixin, AttrDef) {
     var base = T.prototype;
     var prototype = Object.create(base);
     Object.defineProperty(prototype, 'selector', { value: selector });
-    definition(prototype, XElementMixin, base);
+    definition(prototype, base);
     options.prototype = prototype;
     return _register(customTagName, options);
   };

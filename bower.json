@@ -16,6 +16,9 @@
     "tests"
   ],
   "dependencies": {
-    "xelement": "git://github.com/bpander/xelement.git#0.0.1"
+    "xelement": "git://github.com/bpander/xelement.git#0.1.0"
+  },
+  "devDependencies": {
+    "requirejs": "2.1.22"
   }
 }

@@ -55,5 +55,15 @@
         <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
     </footer>
 
+    <script src="bower_components/requirejs/require.js"></script>
+    <script>
+        require.config({
+            baseUrl: 'assets/scripts',
+            paths: {
+                xelement: '../../bower_components/xelement/XElement'
+            }
+        });
+        require(['main']);
+    </script>
 </body>
 </html>
