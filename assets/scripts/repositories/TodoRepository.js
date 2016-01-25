@@ -36,7 +36,7 @@ define(function (require) {
 
     TodoRepository.prototype.create = function (data) {
         var models = this.fetch();
-        var model = $.extend({}, _todoInterface, {
+        var model = Object.assign({}, _todoInterface, {
             guid: _generateGUID(),
             data: data
         });

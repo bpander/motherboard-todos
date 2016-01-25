@@ -9,7 +9,6 @@
     "commit": "176c05c8554eb565779de5a4ddaa7a8f045512a4"
   },
   "_source": "git://github.com/serbanghita/formToObject.js.git",
-  "_target": "~1.0.7",
-  "_originalSource": "git://github.com/serbanghita/formToObject.js.git",
-  "_direct": true
+  "_target": "1.0.7",
+  "_originalSource": "git://github.com/serbanghita/formToObject.js.git"
 }
