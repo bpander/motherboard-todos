@@ -12,45 +12,6 @@ define(function (require) {
         var MODEL_ID_KEY = 'todosModelId';
 
 
-        var _handleSubmit = function (e) {
-            var todoModel = this.todoRepository.create(e.data.requestObject);
-            this.add(todoModel);
-            this.formComponent.element.reset();
-            this.updateUI();
-        };
-
-
-        var _handleTodoStatusChange = function (e) {
-            this.toggleComplete([ e.target ], e.data.complete);
-            this.updateUI();
-        };
-
-
-        var _handleTodoTextChange = function (e) {
-            var guid = e.target.element.dataset[MODEL_ID_KEY];
-            this.todoRepository.update(guid, { text: e.data.text });
-        };
-
-
-        var _handleTodoRemove = function (e) {
-            this.remove([ e.target ]);
-            this.updateUI();
-        };
-
-
-        var _handleCheckAllChange = function (e) {
-            this.toggleComplete(this.getComponents(XTodo), e.target.checked);
-            this.updateUI();
-        };
-
-
-        var _handleClearCompletedClick = function () {
-            var completed = this.getComponents(XTodo).filter(c => c.checkbox.checked);
-            this.remove(completed);
-            this.updateUI();
-        };
-
-
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
@@ -68,9 +29,9 @@ define(function (require) {
 
             this.formComponent = this.getComponent(XForm);
 
-            this.createBinding(this.formComponent, XForm.prototype.EVENT.CUSTOM_SUBMIT, _handleSubmit);
-            this.createBinding(this.checkAllBox, 'change', _handleCheckAllChange);
-            this.createBinding(this.clearCompletedButton, 'click', _handleClearCompletedClick);
+            this.createBinding(this.formComponent, XForm.prototype.EVENT.CUSTOM_SUBMIT, proto.handleSubmit);
+            this.createBinding(this.checkAllBox, 'change', proto.handleCheckAllChange);
+            this.createBinding(this.clearCompletedButton, 'click', proto.handleClearCompletedClick);
             this.enable();
 
             this.todoRepository.fetch().forEach(todo => this.add(todo));
@@ -80,29 +41,28 @@ define(function (require) {
 
         proto.add = function (todoModel) {
             var element = this.todoList.appendChild(document.createElement('li'));
-            var component = Parser.create(XTodo, element, { option: true });
-            component.render(todoModel.data);
-            element.dataset[MODEL_ID_KEY] = todoModel.guid;
-            this.createBinding(component, XTodo.EVENT.STATUS_CHANGE, _handleTodoStatusChange).enable();
-            this.createBinding(component, XTodo.EVENT.TEXT_CHANGE, _handleTodoTextChange).enable();
-            this.createBinding(component, XTodo.EVENT.REMOVE, _handleTodoRemove).enable();
+            var xtodo = new XTodo();
+            element.appendChild(xtodo);
+            xtodo.render(todoModel.data);
+            xtodo.dataset[MODEL_ID_KEY] = todoModel.guid;
+            this.createBinding(xtodo, xtodo.EVENT.STATUS_CHANGE, proto.handleTodoStatusChange).enable();
+            this.createBinding(xtodo, xtodo.EVENT.TEXT_CHANGE, proto.handleTodoTextChange).enable();
+            this.createBinding(xtodo, xtodo.EVENT.REMOVE, proto.handleTodoRemove).enable();
         };
 
 
         proto.remove = function (todoComponents) {
-            todoComponents.forEach(function (todoComponent) {
-                var element = todoComponent.element;
-                var id = element.dataset[MODEL_ID_KEY];
+            todoComponents.forEach(function (xtodo) {
+                var id = xtodo.dataset[MODEL_ID_KEY];
                 this.todoRepository.delete(id);
-                Parser.unparse(todoComponent.element);
-                element.parentNode.removeChild(element);
+                xtodo.parentNode.removeChild(xtodo);
             }, this);
         };
 
 
         proto.toggleComplete = function (todoComponents, isComplete) {
             todoComponents.forEach(function (todoComponent) {
-                var guid = todoComponent.element.dataset[MODEL_ID_KEY];
+                var guid = todoComponent.dataset[MODEL_ID_KEY];
                 this.todoRepository.update(guid, { complete: isComplete });
                 todoComponent.checkbox.checked = isComplete;
             }, this);
@@ -110,22 +70,61 @@ define(function (require) {
 
 
         proto.updateUI = function () {
-            var todoComponents = this.getComponents(XTodo);
-            if (todoComponents.length <= 0) {
-                this.footer.style.display = 'none';
-                this.checkAllBox.style.display = 'none';
-                return;
-            }
-            var completedCount = todoComponents.filter(c => c.checkbox.checked).length;
-            var remainingCount = todoComponents.length - completedCount;
-            var areAllComplete = remainingCount <= 0;
+            // var todoComponents = this.getComponents(XTodo);
+            // if (todoComponents.length <= 0) {
+            //     this.footer.style.display = 'none';
+            //     this.checkAllBox.style.display = 'none';
+            //     return;
+            // }
+            // var completedCount = todoComponents.filter(c => c.checkbox.checked).length;
+            // var remainingCount = todoComponents.length - completedCount;
+            // var areAllComplete = remainingCount <= 0;
 
-            this.footer.style.display = '';
-            this.checkAllBox.style.display = '';
-            this.checkAllBox.checked = areAllComplete;
+            // this.footer.style.display = '';
+            // this.checkAllBox.style.display = '';
+            // this.checkAllBox.checked = areAllComplete;
 
-            this.remainingCount.innerHTML = remainingCount;
-            this.clearCompletedButton.disabled = completedCount <= 0;
+            // this.remainingCount.innerHTML = remainingCount;
+            // this.clearCompletedButton.disabled = completedCount <= 0;
+        };
+
+
+        proto.handleSubmit = function (e) {
+            var todoModel = this.todoRepository.create(e.detail.request);
+            this.add(todoModel);
+            this.formComponent.reset();
+            this.updateUI();
+        };
+
+
+        proto.handleTodoStatusChange = function (e) {
+            this.toggleComplete([ e.target ], e.detail.complete);
+            this.updateUI();
+        };
+
+
+        proto.handleTodoTextChange = function (e) {
+            var guid = e.target.dataset[MODEL_ID_KEY];
+            this.todoRepository.update(guid, { text: e.detail.text });
+        };
+
+
+        proto.handleTodoRemove = function (e) {
+            this.remove([ e.target ]);
+            this.updateUI();
+        };
+
+
+        proto.handleCheckAllChange = function (e) {
+            this.toggleComplete(this.getComponents(XTodo), e.target.checked);
+            this.updateUI();
+        };
+
+
+        proto.handleClearCompletedClick = function () {
+            var completed = this.getComponents(XTodo).filter(c => c.checkbox.checked);
+            this.remove(completed);
+            this.updateUI();
         };
 
     });
