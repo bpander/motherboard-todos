@@ -21,10 +21,10 @@
 </head>
 <body>
 
-    <section class="todoapp" data-dispatcher="TodosDispatcher">
+    <section is="x-todo-list" class="todoapp">
         <header class="header">
             <h1>todos</h1>
-            <form data-component="FormComponent" novalidate>
+            <form is="x-form" novalidate>
                 <input class="new-todo" type="text" name="text" placeholder="What needs to be done?" required autocomplete="off" autofocus />
             </form>
         </header>

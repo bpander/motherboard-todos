@@ -3,6 +3,8 @@ define(function (require) {
 
 
     return {
-        XTodo: require('components/XTodo')
+        XForm: require('components/XForm'),
+        XTodo: require('components/XTodo'),
+        XTodoList: require('components/XTodoList')
     };
 });
