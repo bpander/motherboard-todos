@@ -2,9 +2,10 @@ define(function (require) {
     'use strict';
 
     var XElement = require('xelement');
+    var XStatefulElement = require('components/XStatefulElement');
 
 
-    return XElement.define('x-todo', function (proto, base) {
+    return XElement.extend(XStatefulElement, 'x-todo', function (proto, base) {
 
 
         proto.EVENT = {
@@ -17,30 +18,10 @@ define(function (require) {
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
-            this.checkbox = null;
-
-            this.editField = null;
-
-            this.label = null;
-
-        };
-
-
-        proto.render = function (vm) {
-            this.disable();
-            this.bindings = [];
-
-            this.innerHTML = `
-                <div class="view">
-                    <input class="toggle" type="checkbox" ${ vm.complete ? 'checked' : '' } data-tag="TodoComponent:checkbox" />
-                    <label data-tag="TodoComponent:label">${ vm.text }</label>
-                    <button class="destroy" data-tag="TodoComponent:removalButton"></button>
-                </div>
-                <input type="text" class="edit" data-tag="TodoComponent:editField" />
-            `;
-
             this.checkbox = this.findWithTag('TodoComponent:checkbox');
+
             this.editField = this.findWithTag('TodoComponent:editField');
+
             this.label = this.findWithTag('TodoComponent:label');
 
             this.createBinding(this.checkbox, 'change', proto.handleCheckboxChange);
@@ -56,15 +37,18 @@ define(function (require) {
             this.trigger(this.EVENT.STATUS_CHANGE, { complete: e.target.checked });
         };
 
+
         proto.handleRemovalButtonClick = function () {
             this.trigger(this.EVENT.REMOVE);
         };
+
 
         proto.handleLabelDblClick = function () {
             this.element.classList.add(this.options.editingClass);
             this.editField.value = this.label.textContent;
             this.editField.select();
         };
+
 
         proto.handleEditFieldBlur = function (e) {
             if (e.type === 'keyup' && e.keyCode !== 13) {

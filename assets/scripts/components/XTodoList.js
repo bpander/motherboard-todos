@@ -15,6 +15,8 @@ define(function (require) {
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
+            this.todoTemplate = this.findWithTag('x-todo-list.todoTemplate');
+
             this.todoList = this.findWithTag('TodosDispatcher:todoList');
 
             this.checkAllBox = this.findWithTag('TodosDispatcher:checkAllBox');
@@ -40,14 +42,17 @@ define(function (require) {
 
 
         proto.add = function (todoModel) {
-            var element = this.todoList.appendChild(document.createElement('li'));
-            var xtodo = new XTodo();
-            element.appendChild(xtodo);
-            xtodo.render(todoModel.data);
+            var element = document.createElement('li');
+            element.appendChild(document.importNode(this.todoTemplate.content, true));
+
+            var xtodo = element.querySelector(XTodo.prototype.selector);
+            xtodo.setState(todoModel.data);
             xtodo.dataset[MODEL_ID_KEY] = todoModel.guid;
             this.createBinding(xtodo, xtodo.EVENT.STATUS_CHANGE, proto.handleTodoStatusChange).enable();
             this.createBinding(xtodo, xtodo.EVENT.TEXT_CHANGE, proto.handleTodoTextChange).enable();
             this.createBinding(xtodo, xtodo.EVENT.REMOVE, proto.handleTodoRemove).enable();
+
+            this.todoList.appendChild(element);
         };
 
 
