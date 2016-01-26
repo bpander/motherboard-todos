@@ -36,14 +36,14 @@
 
         <header class="header">
             <h1>todos</h1>
-            <form is="x-form" novalidate>
+            <form is="x-form" data-tag="x-todo-list.xform" novalidate>
                 <input class="new-todo" type="text" name="text" placeholder="What needs to be done?" required autocomplete="off" autofocus />
             </form>
         </header>
         <section class="main">
             <input class="toggle-all" id="toggle-all" type="checkbox" data-tag="TodosDispatcher:checkAllBox" />
             <label for="toggle-all">Mark all as complete</label>
-            <ul class="todo-list" data-tag="TodosDispatcher:todoList"></ul>
+            <ul is="x-list" class="todo-list" data-tag="x-todo-list.xlist"></ul>
         </section>
         <footer class="footer" data-tag="TodosDispatcher:footer">
             <span class="todo-count"><strong data-tag="TodosDispatcher:remainingCount">0</strong> items left</span>

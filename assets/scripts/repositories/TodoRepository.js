@@ -36,6 +36,7 @@ define(function (require) {
 
     TodoRepository.prototype.create = function (data) {
         var models = this.fetch();
+        // TODO: This needs to be a deepmerge to work right (.data properties get overwritten), it should be a model instead
         var model = Object.assign({}, _todoInterface, {
             guid: _generateGUID(),
             data: data

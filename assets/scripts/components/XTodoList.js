@@ -6,6 +6,7 @@ define(function (require) {
 
         var XForm = require('components/XForm');
         var XTodo = require('components/XTodo');
+        var XList = require('components/XList');
         var TodoRepository = require('repositories/TodoRepository');
 
 
@@ -17,8 +18,6 @@ define(function (require) {
 
             this.todoTemplate = this.findWithTag('x-todo-list.todoTemplate');
 
-            this.todoList = this.findWithTag('TodosDispatcher:todoList');
-
             this.checkAllBox = this.findWithTag('TodosDispatcher:checkAllBox');
 
             this.remainingCount = this.findWithTag('TodosDispatcher:remainingCount');
@@ -27,11 +26,13 @@ define(function (require) {
 
             this.footer = this.findWithTag('TodosDispatcher:footer');
 
+            this.xform = this.getComponent(XForm, 'x-todo-list.xform');
+
+            this.xlist = this.getComponent(XList, 'x-todo-list.xlist');
+
             this.todoRepository = new TodoRepository();
 
-            this.formComponent = this.getComponent(XForm);
-
-            this.createBinding(this.formComponent, XForm.prototype.EVENT.CUSTOM_SUBMIT, proto.handleSubmit);
+            this.createBinding(this.xform, this.xform.EVENT.CUSTOM_SUBMIT, proto.handleSubmit);
             this.createBinding(this.checkAllBox, 'change', proto.handleCheckAllChange);
             this.createBinding(this.clearCompletedButton, 'click', proto.handleClearCompletedClick);
             this.enable();
@@ -41,18 +42,19 @@ define(function (require) {
         };
 
 
+        // TODO: This should take an array of models and should call the filter fn on it (in case of adding an item while the filter is set to "completed")
+        // TODO: Whever this takes, .remove should also take (either both take models or both take elements)
         proto.add = function (todoModel) {
-            var element = document.createElement('li');
-            element.appendChild(document.importNode(this.todoTemplate.content, true));
-
-            var xtodo = element.querySelector(XTodo.prototype.selector);
+            var docFrag = document.importNode(this.todoTemplate.content, true);
+            var xtodo = docFrag.querySelector(XTodo.prototype.selector);
             xtodo.setState(todoModel.data);
             xtodo.dataset[MODEL_ID_KEY] = todoModel.guid;
+            this.xlist.add(xtodo);
+
+            // TODO: Move these to .createdCallback because the events can be delegated
             this.createBinding(xtodo, xtodo.EVENT.STATUS_CHANGE, proto.handleTodoStatusChange).enable();
             this.createBinding(xtodo, xtodo.EVENT.TEXT_CHANGE, proto.handleTodoTextChange).enable();
             this.createBinding(xtodo, xtodo.EVENT.REMOVE, proto.handleTodoRemove).enable();
-
-            this.todoList.appendChild(element);
         };
 
 
@@ -60,7 +62,7 @@ define(function (require) {
             todoComponents.forEach(function (xtodo) {
                 var id = xtodo.dataset[MODEL_ID_KEY];
                 this.todoRepository.delete(id);
-                xtodo.parentNode.removeChild(xtodo);
+                this.xlist.remove(xtodo);
             }, this);
         };
 
@@ -97,7 +99,7 @@ define(function (require) {
         proto.handleSubmit = function (e) {
             var todoModel = this.todoRepository.create(e.detail.request);
             this.add(todoModel);
-            this.formComponent.reset();
+            this.xform.reset();
             this.updateUI();
         };
 
@@ -115,6 +117,7 @@ define(function (require) {
 
 
         proto.handleTodoRemove = function (e) {
+            // TODO: the repository remove call should go here (to mirror .add)
             this.remove([ e.target ]);
             this.updateUI();
         };

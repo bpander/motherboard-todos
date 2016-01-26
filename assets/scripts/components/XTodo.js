@@ -18,17 +18,17 @@ define(function (require) {
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
-            this.checkbox = this.findWithTag('TodoComponent:checkbox');
+            this.checkbox = this.findWithTag('x-todo.checkbox');
 
-            this.editField = this.findWithTag('TodoComponent:editField');
+            this.editField = this.findWithTag('x-todo.editField');
 
-            this.label = this.findWithTag('TodoComponent:label');
+            this.label = this.findWithTag('x-todo.label');
 
             this.createBinding(this.checkbox, 'change', proto.handleCheckboxChange);
             this.createBinding(this.label, 'dblclick', proto.handleLabelDblClick);
             this.createBinding(this.editField, 'keyup', proto.handleEditFieldBlur);
             this.createBinding(this.editField, 'blur', proto.handleEditFieldBlur)
-            this.createBinding(this.findWithTag('TodoComponent:removalButton'), 'click', proto.handleRemovalButtonClick);
+            this.createBinding(this.findWithTag('x-todo.removalButton'), 'click', proto.handleRemovalButtonClick);
             this.enable();
         };
 
