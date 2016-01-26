@@ -32,9 +32,12 @@ define(function (require) {
 
             this.todoRepository = new TodoRepository();
 
-            this.createBinding(this.xform, this.xform.EVENT.CUSTOM_SUBMIT, proto.handleSubmit);
             this.createBinding(this.checkAllBox, 'change', proto.handleCheckAllChange);
             this.createBinding(this.clearCompletedButton, 'click', proto.handleClearCompletedClick);
+            this.createBinding(this.xform, this.xform.EVENT.CUSTOM_SUBMIT, proto.handleSubmit);
+            this.createBinding(this, XTodo.prototype.EVENT.STATUS_CHANGE, proto.handleTodoStatusChange);
+            this.createBinding(this, XTodo.prototype.EVENT.TEXT_CHANGE, proto.handleTodoTextChange);
+            this.createBinding(this, XTodo.prototype.EVENT.REMOVE, proto.handleTodoRemove);
             this.enable();
 
             this.todoRepository.fetch().forEach(todo => this.add(todo));
@@ -50,11 +53,6 @@ define(function (require) {
             xtodo.setState(todoModel.data);
             xtodo.dataset[MODEL_ID_KEY] = todoModel.guid;
             this.xlist.add(xtodo);
-
-            // TODO: Move these to .createdCallback because the events can be delegated
-            this.createBinding(xtodo, xtodo.EVENT.STATUS_CHANGE, proto.handleTodoStatusChange).enable();
-            this.createBinding(xtodo, xtodo.EVENT.TEXT_CHANGE, proto.handleTodoTextChange).enable();
-            this.createBinding(xtodo, xtodo.EVENT.REMOVE, proto.handleTodoRemove).enable();
         };
 
 
