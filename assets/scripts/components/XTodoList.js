@@ -1,13 +1,15 @@
 define(function (require) {
     'use strict';
 
+    var XElement = require('xelement');
+    var XForm = require('components/XForm');
+    var XList = require('components/XList');
+    var XStatefulElement = require('components/XStatefulElement');
+    var XTodo = require('components/XTodo');
+    var TodoRepository = require('repositories/TodoRepository');
 
-    return require('xelement').extend('section', 'x-todo-list', function (proto, base) {
 
-        var XForm = require('components/XForm');
-        var XTodo = require('components/XTodo');
-        var XList = require('components/XList');
-        var TodoRepository = require('repositories/TodoRepository');
+    return XElement.extend(XStatefulElement, 'x-todo-list', function (proto, base) {
 
 
         var MODEL_ID_KEY = 'todosModelId';
@@ -16,15 +18,16 @@ define(function (require) {
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
+            this.state = {
+                totalCount: 0,
+                completedCount: 0
+            };
+
             this.todoTemplate = this.findWithTag('x-todo-list.todoTemplate');
 
             this.checkAllBox = this.findWithTag('TodosDispatcher:checkAllBox');
 
-            this.remainingCount = this.findWithTag('TodosDispatcher:remainingCount');
-
             this.clearCompletedButton = this.findWithTag('TodosDispatcher:clearCompletedButton');
-
-            this.footer = this.findWithTag('TodosDispatcher:footer');
 
             this.xform = this.getComponent(XForm, 'x-todo-list.xform');
 
@@ -82,28 +85,19 @@ define(function (require) {
 
 
         proto.updateUI = function () {
-            // var todoComponents = this.getComponents(XTodo);
-            // if (todoComponents.length <= 0) {
-            //     this.footer.style.display = 'none';
-            //     this.checkAllBox.style.display = 'none';
-            //     return;
-            // }
-            // var completedCount = todoComponents.filter(c => c.checkbox.checked).length;
-            // var remainingCount = todoComponents.length - completedCount;
-            // var areAllComplete = remainingCount <= 0;
-
-            // this.footer.style.display = '';
-            // this.checkAllBox.style.display = '';
-            // this.checkAllBox.checked = areAllComplete;
-
-            // this.remainingCount.innerHTML = remainingCount;
-            // this.clearCompletedButton.disabled = completedCount <= 0;
+            // TODO: Refactor this with model data from the repository
+            var todoComponents = this.getComponents(XTodo);
+            var totalCount = todoComponents.length;
+            this.setState({
+                totalCount: totalCount,
+                completedCount: todoComponents.filter(c => c.checkbox.checked).length
+            });
         };
 
 
         proto.handleSubmit = function (e) {
             var todoModel = this.todoRepository.create(e.detail.request);
-            this.add(todoModel);
+            this.add([ this.createTodoFromModel(todoModel) ]);
             this.xform.reset();
             this.updateUI();
         };

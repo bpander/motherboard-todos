@@ -16,6 +16,7 @@ define(function (require) {
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
+            // TODO: This should exclude data-props inside of children XStatefulElements
             this.pieces = Array.prototype.map.call(this.querySelectorAll('[data-props]') || [], function (element) {
                 return {
                     element: element,
@@ -36,6 +37,7 @@ define(function (require) {
             var l;
             var oldVal;
             var newVal;
+            // TODO: Make this work on nested properties like element.style
             for (i = 0, l = this.pieces.length; i < l; i++) {
                 piece = this.pieces[i];
                 props = piece.template(state);

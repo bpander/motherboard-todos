@@ -17,49 +17,71 @@
             text-decoration: line-through;
             color: #d9d9d9;
         }
+        .hidden {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
 
-    <section is="x-todo-list" class="todoapp">
+    <section class="todoapp">
+        <x-todo-list>
+            <template data-tag="x-todo-list.todoTemplate">
+                <x-todo>
+                    <div class="view">
+                        <input class="toggle" type="checkbox" data-props='{ checked: state.complete }' data-tag="x-todo.checkbox" />
+                        <label data-props='{ textContent: state.text }' data-tag="x-todo.label"></label>
+                        <button class="destroy" data-tag="x-todo.removalButton"></button>
+                    </div>
+                    <input type="text" class="edit" data-tag="x-todo.editField" />
+                </x-todo>
+            </template>
 
-        <template data-tag="x-todo-list.todoTemplate">
-            <x-todo>
-                <div class="view">
-                    <input class="toggle" type="checkbox" data-props='{ checked: state.complete }' data-tag="x-todo.checkbox" />
-                    <label data-props='{ textContent: state.text }' data-tag="x-todo.label"></label>
-                    <button class="destroy" data-tag="x-todo.removalButton"></button>
-                </div>
-                <input type="text" class="edit" data-tag="x-todo.editField" />
-            </x-todo>
-        </template>
-
-        <header class="header">
-            <h1>todos</h1>
-            <form is="x-form" data-tag="x-todo-list.xform" novalidate>
-                <input class="new-todo" type="text" name="text" placeholder="What needs to be done?" required autocomplete="off" autofocus />
-            </form>
-        </header>
-        <section class="main">
-            <input class="toggle-all" id="toggle-all" type="checkbox" data-tag="TodosDispatcher:checkAllBox" />
-            <label for="toggle-all">Mark all as complete</label>
-            <ul is="x-list" class="todo-list" data-tag="x-todo-list.xlist"></ul>
-        </section>
-        <footer class="footer" data-tag="TodosDispatcher:footer">
-            <span class="todo-count"><strong data-tag="TodosDispatcher:remainingCount">0</strong> items left</span>
-            <ul class="filters">
-                <li>
-                    <a class="selected" href="#/">All</a>
-                </li>
-                <li>
-                    <a href="#/active">Active</a>
-                </li>
-                <li>
-                    <a href="#/completed">Completed</a>
-                </li>
-            </ul>
-            <button class="clear-completed" data-tag="TodosDispatcher:clearCompletedButton">Clear completed</button>
-        </footer>
+            <header class="header">
+                <h1>todos</h1>
+                <form is="x-form" data-tag="x-todo-list.xform" novalidate>
+                    <input class="new-todo" type="text" name="text" placeholder="What needs to be done?" required autocomplete="off" autofocus />
+                </form>
+            </header>
+            <section class="main">
+                <input
+                    type="checkbox"
+                    class="toggle-all"
+                    id="toggle-all"
+                    data-tag="TodosDispatcher:checkAllBox"
+                    data-props="{
+                        className: (state.totalCount > 0) ? 'toggle-all' : 'hidden',
+                        checked: state.completedCount === state.totalCount
+                    }"
+                />
+                <label for="toggle-all">Mark all as complete</label>
+                <ul is="x-list" class="todo-list" data-tag="x-todo-list.xlist"></ul>
+            </section>
+            <footer class="footer" data-props="{ className: (state.totalCount > 0) ? 'footer' : 'hidden' }">
+                <span class="todo-count">
+                    <strong data-props="{ textContent: state.totalCount - state.completedCount }">0</strong>
+                    items left
+                </span>
+                <ul class="filters">
+                    <li>
+                        <a class="selected" href="#/">All</a>
+                    </li>
+                    <li>
+                        <a href="#/active">Active</a>
+                    </li>
+                    <li>
+                        <a href="#/completed">Completed</a>
+                    </li>
+                </ul>
+                <button
+                    class="clear-completed"
+                    data-tag="TodosDispatcher:clearCompletedButton"
+                    data-props="{ disabled: state.completedCount === 0 }"
+                >
+                    Clear completed
+                </button>
+            </footer>
+        </x-todo-list>
     </section>
     <footer class="info">
         <p>Double-click to edit a todo</p>
