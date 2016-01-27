@@ -34,25 +34,32 @@ define(function (require) {
 
             this.createBinding(this.checkAllBox, 'change', proto.handleCheckAllChange);
             this.createBinding(this.clearCompletedButton, 'click', proto.handleClearCompletedClick);
+            // TODO: Namespace custom events
             this.createBinding(this.xform, this.xform.EVENT.CUSTOM_SUBMIT, proto.handleSubmit);
             this.createBinding(this, XTodo.prototype.EVENT.STATUS_CHANGE, proto.handleTodoStatusChange);
             this.createBinding(this, XTodo.prototype.EVENT.TEXT_CHANGE, proto.handleTodoTextChange);
             this.createBinding(this, XTodo.prototype.EVENT.REMOVE, proto.handleTodoRemove);
             this.enable();
 
-            this.todoRepository.fetch().forEach(todo => this.add(todo));
+            this.add( this.todoRepository.fetch().map(todo => this.createTodoFromModel(todo)) );
             this.updateUI();
+        };
+
+
+        proto.createTodoFromModel = function (model) {
+            var docFrag = document.importNode(this.todoTemplate.content, true);
+            var xtodo = docFrag.querySelector(XTodo.prototype.selector);
+            xtodo.setState(model.data);
+            xtodo.dataset[MODEL_ID_KEY] = model.guid;
+            return xtodo;
         };
 
 
         // TODO: This should take an array of models and should call the filter fn on it (in case of adding an item while the filter is set to "completed")
         // TODO: Whever this takes, .remove should also take (either both take models or both take elements)
-        proto.add = function (todoModel) {
-            var docFrag = document.importNode(this.todoTemplate.content, true);
-            var xtodo = docFrag.querySelector(XTodo.prototype.selector);
-            xtodo.setState(todoModel.data);
-            xtodo.dataset[MODEL_ID_KEY] = todoModel.guid;
-            this.xlist.add(xtodo);
+        proto.add = function (xtodos) {
+            // TODO: Filter stuff goes here
+            xtodos.forEach(xtodo => this.xlist.add(xtodo));
         };
 
 
