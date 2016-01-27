@@ -18,6 +18,11 @@ define(function (require) {
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
+            this.state = {
+                complete: false,
+                text: ''
+            };
+
             this.checkbox = this.findWithTag('x-todo.checkbox');
 
             this.editField = this.findWithTag('x-todo.editField');

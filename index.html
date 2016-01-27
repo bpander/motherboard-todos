@@ -26,8 +26,8 @@
         <template data-tag="x-todo-list.todoTemplate">
             <x-todo>
                 <div class="view">
-                    <input class="toggle" type="checkbox" data-state='{ "checked": {{= it.complete }} }' data-tag="x-todo.checkbox" />
-                    <label data-state='{ "innerText": "{{= it.text }}" }' data-tag="x-todo.label"></label>
+                    <input class="toggle" type="checkbox" data-props='{ checked: state.complete }' data-tag="x-todo.checkbox" />
+                    <label data-props='{ textContent: state.text }' data-tag="x-todo.label"></label>
                     <button class="destroy" data-tag="x-todo.removalButton"></button>
                 </div>
                 <input type="text" class="edit" data-tag="x-todo.editField" />
