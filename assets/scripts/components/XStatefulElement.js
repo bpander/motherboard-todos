@@ -2,15 +2,24 @@ define(function (require) {
     'use strict';
 
     var XElement = require('xelement');
-    var doT = require('../bower_components/doT/doT.js');
 
 
     return XElement.define('x-stateful-element', function (proto, base) {
 
-        
-        var _templateSettings = Object.assign({}, doT.templateSettings, {
-            varname: 'state'
-        });
+
+        var VAR_NAME = 'state';
+
+        /**
+         * This essentially works the same way as doT.js's compilation except without any logic tags and it returns an object instead of a string.
+         *
+         * @private
+         * @static
+         * @param  {String} templateString  A string to be evaluated (note: not eval'd) with a `state` context, e.g. `'{ textContent: state.text }'`.
+         * @return {Function}  A template function
+         */
+        var _compileObjectTemplate = function (templateString) {
+            return new Function(VAR_NAME, 'return ' + templateString + ';');
+        };
 
 
         proto.createdCallback = function () {
@@ -20,7 +29,7 @@ define(function (require) {
             this.pieces = Array.prototype.map.call(this.querySelectorAll('[data-props]') || [], function (element) {
                 return {
                     element: element,
-                    template: doT.template('{{ out=' + element.dataset.props + '; }}', _templateSettings)
+                    template: _compileObjectTemplate(element.dataset.props)
                 };
             });
 
