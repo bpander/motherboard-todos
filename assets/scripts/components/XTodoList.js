@@ -51,7 +51,7 @@ define(function (require) {
         proto.createTodoFromModel = function (model) {
             var docFrag = document.importNode(this.todoTemplate.content, true);
             var xtodo = docFrag.querySelector(XTodo.prototype.selector);
-            xtodo.setState(model.data);
+            xtodo.setState(model.props);
             xtodo.dataset[MODEL_ID_KEY] = model.guid;
             return xtodo;
         };
