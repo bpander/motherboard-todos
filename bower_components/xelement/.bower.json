@@ -22,14 +22,14 @@
     "webcomponentsjs": "0.7.20",
     "matchMedia": "matchmedia#0.3.0"
   },
-  "version": "0.1.3",
-  "_release": "0.1.3",
+  "version": "0.1.5",
+  "_release": "0.1.5",
   "_resolution": {
     "type": "version",
-    "tag": "0.1.3",
-    "commit": "aa82bdf51804996201ecfb3a1023a944bef0c377"
+    "tag": "0.1.5",
+    "commit": "1eff28cae84a384f2b2fb462d21b4c023a0e5ef8"
   },
   "_source": "git://github.com/bpander/xelement.git",
-  "_target": "0.1.3",
+  "_target": "0.1.5",
   "_originalSource": "git://github.com/bpander/xelement.git"
 }
