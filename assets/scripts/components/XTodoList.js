@@ -57,29 +57,14 @@ define(function (require) {
         };
 
 
-        // TODO: This should take an array of models and should call the filter fn on it (in case of adding an item while the filter is set to "completed")
-        // TODO: Whever this takes, .remove should also take (either both take models or both take elements)
         proto.add = function (xtodos) {
             // TODO: Filter stuff goes here
             xtodos.forEach(xtodo => this.xlist.add(xtodo));
         };
 
 
-        proto.remove = function (todoComponents) {
-            todoComponents.forEach(function (xtodo) {
-                var id = xtodo.dataset[MODEL_ID_KEY];
-                this.todoRepository.delete(id);
-                this.xlist.remove(xtodo);
-            }, this);
-        };
-
-
-        proto.toggleComplete = function (todoComponents, isComplete) {
-            todoComponents.forEach(function (todoComponent) {
-                var guid = todoComponent.dataset[MODEL_ID_KEY];
-                this.todoRepository.update(guid, { complete: isComplete });
-                todoComponent.checkbox.checked = isComplete;
-            }, this);
+        proto.remove = function (xtodos) {
+            xtodos.forEach(xtodo => this.xlist.remove(xtodo));
         };
 
 
@@ -103,7 +88,8 @@ define(function (require) {
 
 
         proto.handleTodoStatusChange = function (e) {
-            this.toggleComplete([ e.target ], e.detail.complete);
+            var guid = e.target.dataset[MODEL_ID_KEY];
+            this.todoRepository.update(guid, { complete: e.target.checkbox.checked });
             this.updateUI();
         };
 
@@ -115,20 +101,26 @@ define(function (require) {
 
 
         proto.handleTodoRemove = function (e) {
-            // TODO: the repository remove call should go here (to mirror .add)
+            this.todoRepository.delete(e.target.dataset[MODEL_ID_KEY]);
             this.remove([ e.target ]);
             this.updateUI();
         };
 
 
         proto.handleCheckAllChange = function (e) {
-            this.toggleComplete(this.getComponents(XTodo), e.target.checked);
+            var complete = e.target.checked;
+            this.getComponents(XTodo).forEach(xtodo => {
+                var guid = xtodo.dataset[MODEL_ID_KEY];
+                xtodo.setState({ complete: complete });
+                this.todoRepository.update(guid, { complete: complete }); // TODO: This could be optimized by updating multiple models at once
+            });
             this.updateUI();
         };
 
 
         proto.handleClearCompletedClick = function () {
             var completed = this.getComponents(XTodo).filter(c => c.checkbox.checked);
+            this.todoRepository.delete(completed.map(xtodo => xtodo.dataset[MODEL_ID_KEY]));
             this.remove(completed);
             this.updateUI();
         };
