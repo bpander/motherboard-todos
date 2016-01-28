@@ -66,12 +66,11 @@ define(function (require) {
 
 
         proto.updateUI = function () {
-            // TODO: Refactor this with model data from the repository
-            var todoComponents = this.getComponents(XTodo);
-            var totalCount = todoComponents.length;
+            var todoModels = this.todoRepository.localModels;
+            var totalCount = todoModels.length;
             this.setState({
                 totalCount: totalCount,
-                completedCount: todoComponents.filter(c => c.checkbox.checked).length
+                completedCount: todoModels.filter(model => model.props.complete).length
             });
         };
 

@@ -6,19 +6,23 @@ define(function (require) {
 
     function TodoRepository () {
 
+        this.localModels = [];
+
     }
 
 
     TodoRepository.prototype.fetch = function () {
         var rawModels = JSON.parse(localStorage.getItem('TodoRepository')) || [];
-        return rawModels.map(function (rawModel) {
+        this.localModels = rawModels.map(function (rawModel) {
             return new TodoModel(rawModel.guid).set(rawModel.props);
         });
+        return this.localModels;
     };
 
 
-    TodoRepository.prototype.push = function (data) {
-        localStorage.setItem('TodoRepository', JSON.stringify(data));
+    TodoRepository.prototype.push = function (models) {
+        localStorage.setItem('TodoRepository', JSON.stringify(models));
+        this.localModels = models;
     };
 
 
