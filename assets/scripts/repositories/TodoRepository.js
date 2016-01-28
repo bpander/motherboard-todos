@@ -45,16 +45,21 @@ define(function (require) {
     };
 
 
-    TodoRepository.prototype.delete = function (guid) {
-        var models = this.fetch();
-        var i = models.length;
-        var model;
-        while ((model = models[--i]) !== undefined) {
-            if (model.guid === guid) {
-                models.splice(i, 1);
-                break;
-            }
+    TodoRepository.prototype.delete = function (guids) {
+        if (typeof guids === 'string') {
+            return this.delete([ guids ]);
         }
+        var models = this.fetch();
+        guids.forEach(function (guid) {
+            var i = models.length;
+            var model;
+            while ((model = models[--i]) !== undefined) {
+                if (model.guid === guid) {
+                    models.splice(i, 1);
+                    break;
+                }
+            }
+        }, this);
         this.push(models);
     };
 
