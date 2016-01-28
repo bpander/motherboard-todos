@@ -55,10 +55,11 @@ define(function (require) {
             var l;
             var oldVal;
             var newVal;
+            Object.assign(this.state, state);
             // TODO: Make this work on nested properties like element.style
             for (i = 0, l = this.pieces.length; i < l; i++) {
                 piece = this.pieces[i];
-                props = piece.template(state);
+                props = piece.template(this.state);
                 for (prop in props) {
                     if (props.hasOwnProperty(prop)) {
                         oldVal = piece.element[prop];
@@ -69,7 +70,6 @@ define(function (require) {
                     }
                 }
             }
-            Object.assign(this.state, state);
         };
 
 
