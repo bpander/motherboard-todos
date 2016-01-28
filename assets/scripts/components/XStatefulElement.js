@@ -22,11 +22,20 @@ define(function (require) {
         };
 
 
+        proto.customAttributes = [
+
+            XElement.attribute('props-attr', {
+                type: String,
+                default: 'data-props'
+            })
+
+        ];
+
+
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
-            // TODO: This should exclude data-props inside of children XStatefulElements
-            this.pieces = Array.prototype.map.call(this.querySelectorAll('[data-props]') || [], function (element) {
+            this.pieces = Array.prototype.map.call(this.querySelectorAll('[' + this.propsAttr + ']') || [], function (element) {
                 return {
                     element: element,
                     template: _compileObjectTemplate(element.dataset.props)
