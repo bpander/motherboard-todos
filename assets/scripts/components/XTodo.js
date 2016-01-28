@@ -8,6 +8,16 @@ define(function (require) {
     return XElement.extend(XStatefulElement, 'x-todo', function (proto, base) {
 
 
+        proto.customAttributes = [
+
+            XElement.attribute('editing-class', {
+                type: String,
+                default: 'editing'
+            })
+
+        ];
+
+
         proto.EVENT = {
             STATUS_CHANGE: 'complete',
             TEXT_CHANGE: 'textchange',
@@ -49,7 +59,8 @@ define(function (require) {
 
 
         proto.handleLabelDblClick = function () {
-            this.element.classList.add(this.options.editingClass);
+            this.parentElement.classList.add(this.editingClass);
+            // Normally you would never use parentElement this way but it's necessary to work with the (not really exemplary) todomvc css (e.g. `.todo-list li.editing .view`)
             this.editField.value = this.label.textContent;
             this.editField.select();
         };
@@ -59,7 +70,7 @@ define(function (require) {
             if (e.type === 'keyup' && e.keyCode !== 13) {
                 return;
             }
-            this.element.classList.remove(this.options.editingClass);
+            this.parentElement.classList.remove(this.editingClass);
             this.label.textContent = this.editField.value;
             this.trigger(this.EVENT.TEXT_CHANGE, { text: this.editField.value });
         };
