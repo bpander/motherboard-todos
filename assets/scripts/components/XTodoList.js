@@ -37,7 +37,6 @@ define(function (require) {
 
             this.createBinding(this.checkAllBox, 'change', proto.handleCheckAllChange);
             this.createBinding(this.clearCompletedButton, 'click', proto.handleClearCompletedClick);
-            // TODO: Namespace custom events
             this.createBinding(this.xform, this.xform.EVENT.CUSTOM_SUBMIT, proto.handleSubmit);
             this.createBinding(this, XTodo.prototype.EVENT.STATUS_CHANGE, proto.handleTodoStatusChange);
             this.createBinding(this, XTodo.prototype.EVENT.TEXT_CHANGE, proto.handleTodoTextChange);

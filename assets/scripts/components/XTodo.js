@@ -19,9 +19,9 @@ define(function (require) {
 
 
         proto.EVENT = {
-            STATUS_CHANGE: 'complete',
-            TEXT_CHANGE: 'textchange',
-            REMOVE: 'remove'
+            STATUS_CHANGE: 'x-todo.complete',
+            TEXT_CHANGE: 'x-todo.textchange',
+            REMOVE: 'x-todo.remove'
         };
 
 

@@ -9,7 +9,7 @@ define(function (require) {
 
 
         proto.EVENT = {
-            CUSTOM_SUBMIT: 'customsubmit'
+            CUSTOM_SUBMIT: 'x-form.customsubmit'
         };
 
 
