@@ -64,5 +64,25 @@ define(function (require) {
     };
 
 
+    TodoRepository.prototype.deleteWhere = function (predicate) {
+        var models = this.fetch();
+        var removed = [];
+        var model;
+        var prop;
+        var i = models.length;
+        while ((model = models[--i]) !== undefined) {
+            for (prop in predicate) {
+                if (predicate.hasOwnProperty(prop)) {
+                    if (model.props[prop] === predicate[prop]) {
+                        removed.push(models.splice(i, 1)[0]);
+                    }
+                }
+            }
+        }
+        this.push(models);
+        return removed;
+    };
+
+
     return TodoRepository;
 });

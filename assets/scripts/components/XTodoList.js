@@ -12,9 +12,6 @@ define(function (require) {
     return XElement.extend(XStatefulElement, 'x-todo-list', function (proto, base) {
 
 
-        var MODEL_ID_KEY = 'todosModelId';
-
-
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
@@ -51,8 +48,8 @@ define(function (require) {
         proto.createTodoFromModel = function (model) {
             var docFrag = document.importNode(this.todoTemplate.content, true);
             var xtodo = docFrag.querySelector(XTodo.prototype.selector);
+            XElement.setTag(xtodo, model.guid);
             xtodo.setState(model.props);
-            xtodo.dataset[MODEL_ID_KEY] = model.guid;
             return xtodo;
         };
 
@@ -88,20 +85,20 @@ define(function (require) {
 
 
         proto.handleTodoStatusChange = function (e) {
-            var guid = e.target.dataset[MODEL_ID_KEY];
+            var guid = XElement.getTag(e.target);
             this.todoRepository.update(guid, { complete: e.target.checkbox.checked });
             this.updateUI();
         };
 
 
         proto.handleTodoTextChange = function (e) {
-            var guid = e.target.dataset[MODEL_ID_KEY];
+            var guid = XElement.getTag(e.target);
             this.todoRepository.update(guid, { text: e.detail.text });
         };
 
 
         proto.handleTodoRemove = function (e) {
-            this.todoRepository.delete(e.target.dataset[MODEL_ID_KEY]);
+            this.todoRepository.delete(XElement.getTag(e.target));
             this.remove([ e.target ]);
             this.updateUI();
         };
@@ -110,7 +107,7 @@ define(function (require) {
         proto.handleCheckAllChange = function (e) {
             var complete = e.target.checked;
             this.getComponents(XTodo).forEach(xtodo => {
-                var guid = xtodo.dataset[MODEL_ID_KEY];
+                var guid = XElement.getTag(xtodo);
                 xtodo.setState({ complete: complete });
                 this.todoRepository.update(guid, { complete: complete }); // TODO: This could be optimized by updating multiple models at once
             });
@@ -119,9 +116,10 @@ define(function (require) {
 
 
         proto.handleClearCompletedClick = function () {
-            var completed = this.getComponents(XTodo).filter(c => c.checkbox.checked);
-            this.todoRepository.delete(completed.map(xtodo => xtodo.dataset[MODEL_ID_KEY]));
-            this.remove(completed);
+            var removed = this.todoRepository.deleteWhere({ complete: true });
+            removed.forEach(function (model) {
+                this.remove([ this.getComponent(XTodo, model.guid) ]);
+            }, this);
             this.updateUI();
         };
 
