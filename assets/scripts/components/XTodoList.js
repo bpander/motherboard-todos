@@ -20,6 +20,8 @@ define(function (require) {
                 completedCount: 0
             };
 
+            this.filter = {};
+
             this.todoTemplate = this.findWithTag('x-todo-list.todoTemplate');
 
             this.checkAllBox = this.findWithTag('TodosDispatcher:checkAllBox');
@@ -62,6 +64,11 @@ define(function (require) {
 
         proto.remove = function (xtodos) {
             xtodos.forEach(xtodo => this.xlist.remove(xtodo));
+        };
+
+
+        proto.setFilter = function (filter) {
+            console.log(filter);
         };
 
 

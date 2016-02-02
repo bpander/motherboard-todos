@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" is="x-app">
 <head>
     <meta charset="utf-8" />
     <title>XElement.js Todo List Demo</title>
@@ -25,7 +25,7 @@
 <body>
 
     <section class="todoapp">
-        <x-todo-list>
+        <x-todo-list data-tag="app.todoList">
             <template data-tag="x-todo-list.todoTemplate">
                 <x-todo>
                     <div class="view">
@@ -62,17 +62,28 @@
                     <strong data-props="{ textContent: state.totalCount - state.completedCount }">0</strong>
                     items left
                 </span>
-                <ul class="filters">
-                    <li>
-                        <a class="selected" href="#/">All</a>
-                    </li>
-                    <li>
-                        <a href="#/active">Active</a>
-                    </li>
-                    <li>
-                        <a href="#/completed">Completed</a>
-                    </li>
-                </ul>
+                <x-nav data-tag="app.nav" props-attr="data-nav-state">
+                    <ul class="filters">
+                        <li>
+                            <a
+                                href="#/"
+                                data-nav-state="{ className: (state.page === '') ? state.selected : '' }"
+                            >All</a>
+                        </li>
+                        <li>
+                            <a
+                                href="#/active"
+                                data-nav-state="{ className: (state.page === '/active') ? state.selected : '' }"
+                            >Active</a>
+                        </li>
+                        <li>
+                            <a
+                                href="#/completed"
+                                data-nav-state="{ className: (state.page === '/completed') ? state.selected : '' }"
+                            >Completed</a>
+                        </li>
+                    </ul>
+                </x-nav>
                 <button
                     class="clear-completed"
                     data-tag="TodosDispatcher:clearCompletedButton"
@@ -94,7 +105,13 @@
         require.config({
             baseUrl: 'assets/scripts',
             paths: {
+                routie: '../../bower_components/routie/dist/routie',
                 xelement: '../../bower_components/xelement/XElement'
+            },
+            shim: {
+                routie: {
+                    exports: 'routie'
+                }
             }
         });
         require(['main']);
