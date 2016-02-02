@@ -42,7 +42,8 @@ define(function (require) {
             this.createBinding(this, XTodo.prototype.EVENT.REMOVE, proto.handleTodoRemove);
             this.enable();
 
-            this.add( this.todoRepository.fetch().map(todo => this.createTodoFromModel(todo)) );
+            var self = this;
+            this.add( this.todoRepository.fetch().map(function (todo) { return self.createTodoFromModel(todo); }) );
             this.updateUI();
         };
 
@@ -58,12 +59,14 @@ define(function (require) {
 
         proto.add = function (xtodos) {
             // TODO: Filter stuff goes here
-            xtodos.forEach(xtodo => this.xlist.add(xtodo));
+            var self = this;
+            xtodos.forEach(function (xtodo) { self.xlist.add(xtodo); });
         };
 
 
         proto.remove = function (xtodos) {
-            xtodos.forEach(xtodo => this.xlist.remove(xtodo));
+            var self = this;
+            xtodos.forEach(function (xtodo) { self.xlist.remove(xtodo); });
         };
 
 
@@ -77,7 +80,7 @@ define(function (require) {
             var totalCount = todoModels.length;
             this.setState({
                 totalCount: totalCount,
-                completedCount: todoModels.filter(model => model.props.complete).length
+                completedCount: todoModels.filter(function (model) { return model.props.complete; }).length
             });
         };
 
@@ -111,11 +114,12 @@ define(function (require) {
 
 
         proto.handleCheckAllChange = function (e) {
+            var self = this;
             var complete = e.target.checked;
-            this.getComponents(XTodo).forEach(xtodo => {
+            this.getComponents(XTodo).forEach(function (xtodo) {
                 var guid = XElement.getTag(xtodo);
                 xtodo.setState({ complete: complete });
-                this.todoRepository.update(guid, { complete: complete }); // TODO: This could be optimized by updating multiple models at once
+                self.todoRepository.update(guid, { complete: complete }); // TODO: This could be optimized by updating multiple models at once
             });
             this.updateUI();
         };

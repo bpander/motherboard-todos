@@ -100,21 +100,6 @@
         <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
     </footer>
 
-    <script src="bower_components/requirejs/require.js"></script>
-    <script>
-        require.config({
-            baseUrl: 'assets/scripts',
-            paths: {
-                routie: '../../bower_components/routie/dist/routie',
-                xelement: '../../bower_components/xelement/XElement'
-            },
-            shim: {
-                routie: {
-                    exports: 'routie'
-                }
-            }
-        });
-        require(['main']);
-    </script>
+    <script src="built/main.min.js"></script>
 </body>
 </html>
