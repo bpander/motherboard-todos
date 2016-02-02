@@ -38,9 +38,9 @@ define(function (require) {
             this.pieces = Array.prototype.map.call(this.querySelectorAll('[' + this.propsAttr + ']') || [], function (element) {
                 return {
                     element: element,
-                    template: _compileObjectTemplate(element.dataset.props)
+                    template: _compileObjectTemplate(element.getAttribute(this.propsAttr))
                 };
-            });
+            }, this);
 
             this.state = {};
 
