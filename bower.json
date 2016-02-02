@@ -17,7 +17,8 @@
   ],
   "dependencies": {
     "xelement": "git://github.com/bpander/xelement.git#0.1.5",
-    "formToObject.js": "git://github.com/serbanghita/formToObject.js.git#1.0.7"
+    "formToObject.js": "git://github.com/serbanghita/formToObject.js.git#1.0.7",
+    "routie": "0.3.2"
   },
   "devDependencies": {
     "requirejs": "2.1.22"
