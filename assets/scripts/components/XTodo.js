@@ -39,10 +39,10 @@ define(function (require) {
 
             this.label = this.findWithTag('x-todo.label');
 
+            this.blurBinding = this.createBinding(this.editField, 'blur', proto.handleEditFieldBlur);
+            this.createBinding(this.editField, 'keyup', proto.handleEditFieldBlur);
             this.createBinding(this.checkbox, 'change', proto.handleCheckboxChange);
             this.createBinding(this.label, 'dblclick', proto.handleLabelDblClick);
-            this.createBinding(this.editField, 'keyup', proto.handleEditFieldBlur);
-            this.createBinding(this.editField, 'blur', proto.handleEditFieldBlur)
             this.createBinding(this.findWithTag('x-todo.removalButton'), 'click', proto.handleRemovalButtonClick);
             this.enable();
         };
@@ -67,8 +67,21 @@ define(function (require) {
 
 
         proto.handleEditFieldBlur = function (e) {
-            if (e.type === 'keyup' && e.keyCode !== 13) {
-                return;
+            if (e.type === 'keyup') {
+                if (e.keyCode === 27) {
+                    // Escaping will trigger a 'blur' (because the input is getting hid),
+                    // and we don't want that to trigger the normal 'blur' behavior (saving).
+                    // This is a quick and dirty way to temporarily disable normal 'blur' behavior
+                    this.blurBinding.disable();
+                    this.parentElement.classList.remove(this.editingClass);
+                    setTimeout(function () {
+                        this.blurBinding.enable();
+                    }.bind(this), 10);
+                    return;
+                }
+                if (e.keyCode !== 13) {
+                    return;
+                }
             }
             this.parentElement.classList.remove(this.editingClass);
             this.label.textContent = this.editField.value;
