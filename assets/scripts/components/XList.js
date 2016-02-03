@@ -33,5 +33,11 @@ define(function (require) {
         };
 
 
+        proto.empty = function () {
+            this.elements.splice(0, this.elements.length);
+            this.innerHTML = '';
+        };
+
+
     });
 });

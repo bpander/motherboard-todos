@@ -32,6 +32,8 @@ define(function (require) {
 
             this.xlist = this.getComponent(XList, 'x-todo-list.xlist');
 
+            this.xtodos = [];
+
             this.todoRepository = new TodoRepository();
 
             this.createBinding(this.checkAllBox, 'change', proto.handleCheckAllChange);
@@ -42,8 +44,8 @@ define(function (require) {
             this.createBinding(this, XTodo.prototype.EVENT.REMOVE, proto.handleTodoRemove);
             this.enable();
 
-            var self = this;
-            this.add( this.todoRepository.fetch().map(function (todo) { return self.createTodoFromModel(todo); }) );
+            var models = this.todoRepository.fetch();
+            Array.prototype.push.apply(this.xtodos, models.map(function (todo) { return this.createTodoFromModel(todo); }, this));
             this.updateUI();
         };
 
@@ -58,20 +60,45 @@ define(function (require) {
 
 
         proto.add = function (xtodos) {
-            // TODO: Filter stuff goes here
-            var self = this;
-            xtodos.forEach(function (xtodo) { self.xlist.add(xtodo); });
+            var filter = this.filter;
+            var filterKeys = Object.keys(filter);
+            var models = this.todoRepository.localModels.filter(function (model) {
+                return filterKeys.every(function (key) {
+                    return model.props[key] === filter[key];
+                });
+            });
+            var guids = models.map(function (model) { return model.guid; });
+            xtodos.forEach(function (xtodo) {
+                var guid = XElement.getTag(xtodo);
+                var doShow = guids.indexOf(guid) > -1;
+                this.xtodos.push(xtodo);
+                if (doShow) {
+                    this.xlist.add(xtodo);
+                }
+            }, this);
         };
 
 
         proto.remove = function (xtodos) {
-            var self = this;
-            xtodos.forEach(function (xtodo) { self.xlist.remove(xtodo); });
+            xtodos.forEach(function (xtodo) {
+                var i = this.xtodos.indexOf(xtodo);
+                if (i > -1) {
+                    this.xtodos.splice(i, 1);
+                }
+                this.xlist.remove(xtodo);
+            }, this);
         };
 
 
         proto.setFilter = function (filter) {
-            console.log(filter);
+            this.filter = filter;
+            this.updateList();
+        };
+
+
+        proto.updateList = function () {
+            this.xlist.empty();
+            this.add(this.xtodos.splice(0, this.xtodos.length));
         };
 
 
@@ -87,8 +114,9 @@ define(function (require) {
 
         proto.handleSubmit = function (e) {
             var todoModel = this.todoRepository.create(e.detail.request);
-            this.add([ this.createTodoFromModel(todoModel) ]);
+            this.xtodos.push(this.createTodoFromModel(todoModel));
             this.xform.reset();
+            this.updateList();
             this.updateUI();
         };
 
@@ -96,6 +124,7 @@ define(function (require) {
         proto.handleTodoStatusChange = function (e) {
             var guid = XElement.getTag(e.target);
             this.todoRepository.update(guid, { complete: e.target.checkbox.checked });
+            this.updateList();
             this.updateUI();
         };
 
@@ -114,13 +143,13 @@ define(function (require) {
 
 
         proto.handleCheckAllChange = function (e) {
-            var self = this;
             var complete = e.target.checked;
-            this.getComponents(XTodo).forEach(function (xtodo) {
+            this.xtodos.forEach(function (xtodo) {
                 var guid = XElement.getTag(xtodo);
                 xtodo.setState({ complete: complete });
-                self.todoRepository.update(guid, { complete: complete }); // TODO: This could be optimized by updating multiple models at once
-            });
+                this.todoRepository.update(guid, { complete: complete }); // TODO: This could be optimized by updating multiple models at once
+            }, this);
+            this.updateList();
             this.updateUI();
         };
 
@@ -128,7 +157,7 @@ define(function (require) {
         proto.handleClearCompletedClick = function () {
             var removed = this.todoRepository.deleteWhere({ complete: true });
             removed.forEach(function (model) {
-                this.remove([ this.getComponent(XTodo, model.guid) ]);
+                this.remove([ this.xtodos.find(function (xtodo) { return XElement.getTag(xtodo) === model.guid; }) ]);
             }, this);
             this.updateUI();
         };

@@ -46,7 +46,7 @@
             <section class="main">
                 <input
                     type="checkbox"
-                    class="toggle-all"
+                    class="toggle-all hidden"
                     id="toggle-all"
                     data-tag="TodosDispatcher:checkAllBox"
                     data-props="{
@@ -57,7 +57,7 @@
                 <label for="toggle-all">Mark all as complete</label>
                 <ul is="x-list" class="todo-list" data-tag="x-todo-list.xlist"></ul>
             </section>
-            <footer class="footer" data-props="{ className: (state.totalCount > 0) ? 'footer' : 'hidden' }">
+            <footer class="footer hidden" data-props="{ className: (state.totalCount > 0) ? 'footer' : 'hidden' }">
                 <span class="todo-count">
                     <strong data-props="{ textContent: state.totalCount - state.completedCount }">0</strong>
                     items left

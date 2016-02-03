@@ -29,11 +29,11 @@ define(function (require) {
                     self.nav.setState({ page: this.path });
                 },
                 '/active': function () {
-                    self.todoList.setFilter({ completed: false });
+                    self.todoList.setFilter({ complete: false });
                     self.nav.setState({ page: this.path });
                 },
                 '/completed': function () {
-                    self.todoList.setFilter({ completed: true });
+                    self.todoList.setFilter({ complete: true });
                     self.nav.setState({ page: this.path });
                 }
             });
