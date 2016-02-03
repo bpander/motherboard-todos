@@ -2,7 +2,7 @@ define(function (require) {
     'use strict';
 
     var XElement = require('xelement');
-    var formToObject = require('../../../bower_components/formToObject.js/dist/formToObject');
+    var formSerialize = require('form-serialize');
 
 
     return XElement.extend('form', 'x-form', function (proto, base) {
@@ -32,7 +32,7 @@ define(function (require) {
             }
             if (isValid) {
                 this.trigger(this.EVENT.CUSTOM_SUBMIT, {
-                    request: formToObject(this)
+                    request: formSerialize(this, { hash: true })
                 });
             }
         };

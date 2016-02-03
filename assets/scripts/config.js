@@ -1,11 +1,12 @@
 require.config({
     paths: {
+        'form-serialize': '../../bower_components/form-serialize/index',
         routie: '../../bower_components/routie/dist/routie',
         xelement: '../../bower_components/xelement/XElement'
     },
     shim: {
-        routie: {
-            exports: 'routie'
+        'form-serialize': {
+            exports: 'window.formSerialize'
         }
     }
 });

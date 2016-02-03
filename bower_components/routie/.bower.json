@@ -17,7 +17,6 @@
     "commit": "432e07a91190cd627e06f8906d1cf2d9939186ec"
   },
   "_source": "git://github.com/jgallen23/routie.git",
-  "_target": "~0.3.2",
-  "_originalSource": "routie",
-  "_direct": true
+  "_target": "0.3.2",
+  "_originalSource": "routie"
 }
