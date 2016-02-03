@@ -83,6 +83,11 @@ define(function (require) {
                     return;
                 }
             }
+            if (this.editField.value.trim() === '') {
+                this.blurBinding.disable(); // Similar issue stated above
+                this.trigger(this.EVENT.REMOVE);
+                return;
+            }
             this.parentElement.classList.remove(this.editingClass);
             this.label.textContent = this.editField.value;
             this.trigger(this.EVENT.TEXT_CHANGE, { text: this.editField.value });
