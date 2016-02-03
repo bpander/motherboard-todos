@@ -1,8 +1,9 @@
 define(function (require) {
     'use strict';
 
+    require('routie'); // requirejs shim + amdclean doesn't want to work with routie for some reason
+    var routie = window.routie;
     var XElement = require('xelement');
-    var routie = require('routie');
     var XNav = require('components/XNav');
     var XTodoList = require('components/XTodoList');
 

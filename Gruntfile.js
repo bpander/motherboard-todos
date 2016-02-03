@@ -1,5 +1,8 @@
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     'use strict';
+
+    var fs = require('fs');
+    var amdclean = require('amdclean');
 
 
     grunt.initConfig({
@@ -12,32 +15,29 @@ module.exports = function(grunt) {
                     findNestedDependencies: true,
                     baseUrl: 'assets/scripts',
                     mainConfigFile: 'assets/scripts/config.js',
-                    optimize: 'none',
+                    optimize: 'uglify2',
                     include: ['main'],
-                    name: '../../node_modules/almond/almond',
-                    out: 'built/main.js'
-                }
-            }
-        },
+                    out: 'built/main.js',
+                    onModuleBundleComplete: function (data) {
+                        var outputFile = data.path;
 
-
-        uglify: {
-            dist: {
-                files: {
-                    'built/main.min.js': ['built/main.js']
+                        fs.writeFileSync(outputFile, amdclean.clean({
+                            filePath: outputFile
+                        }));
+                    }
                 }
             }
         }
+
 
     });
 
 
     // Load plugins
     grunt.loadNpmTasks('grunt-contrib-requirejs');
-    grunt.loadNpmTasks('grunt-contrib-uglify');
 
 
     // Define tasks
-    grunt.registerTask('default', ['requirejs:dist', 'uglify:dist']);
+    grunt.registerTask('default', ['requirejs:dist']);
 
 };
