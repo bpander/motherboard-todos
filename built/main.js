@@ -1746,6 +1746,12 @@ define('components/XList',['require','xelement'],function (require) {
         };
 
 
+        proto.empty = function () {
+            this.elements.splice(0, this.elements.length);
+            this.innerHTML = '';
+        };
+
+
     });
 });
 
@@ -1790,10 +1796,10 @@ define('components/XTodo',['require','xelement','components/XStatefulElement'],f
 
             this.label = this.findWithTag('x-todo.label');
 
+            this.blurBinding = this.createBinding(this.editField, 'blur', proto.handleEditFieldBlur);
+            this.createBinding(this.editField, 'keyup', proto.handleEditFieldBlur);
             this.createBinding(this.checkbox, 'change', proto.handleCheckboxChange);
             this.createBinding(this.label, 'dblclick', proto.handleLabelDblClick);
-            this.createBinding(this.editField, 'keyup', proto.handleEditFieldBlur);
-            this.createBinding(this.editField, 'blur', proto.handleEditFieldBlur)
             this.createBinding(this.findWithTag('x-todo.removalButton'), 'click', proto.handleRemovalButtonClick);
             this.enable();
         };
@@ -1818,8 +1824,21 @@ define('components/XTodo',['require','xelement','components/XStatefulElement'],f
 
 
         proto.handleEditFieldBlur = function (e) {
-            if (e.type === 'keyup' && e.keyCode !== 13) {
-                return;
+            if (e.type === 'keyup') {
+                if (e.keyCode === 27) {
+                    // Escaping will trigger a 'blur' (because the input is getting hid),
+                    // and we don't want that to trigger the normal 'blur' behavior (saving).
+                    // This is a quick and dirty way to temporarily disable normal 'blur' behavior
+                    this.blurBinding.disable();
+                    this.parentElement.classList.remove(this.editingClass);
+                    setTimeout(function () {
+                        this.blurBinding.enable();
+                    }.bind(this), 10);
+                    return;
+                }
+                if (e.keyCode !== 13) {
+                    return;
+                }
             }
             this.parentElement.classList.remove(this.editingClass);
             this.label.textContent = this.editField.value;
@@ -2016,6 +2035,8 @@ define('components/XTodoList',['require','xelement','components/XForm','componen
 
             this.xlist = this.getComponent(XList, 'x-todo-list.xlist');
 
+            this.xtodos = [];
+
             this.todoRepository = new TodoRepository();
 
             this.createBinding(this.checkAllBox, 'change', proto.handleCheckAllChange);
@@ -2026,8 +2047,8 @@ define('components/XTodoList',['require','xelement','components/XForm','componen
             this.createBinding(this, XTodo.prototype.EVENT.REMOVE, proto.handleTodoRemove);
             this.enable();
 
-            var self = this;
-            this.add( this.todoRepository.fetch().map(function (todo) { return self.createTodoFromModel(todo); }) );
+            var models = this.todoRepository.fetch();
+            Array.prototype.push.apply(this.xtodos, models.map(function (todo) { return this.createTodoFromModel(todo); }, this));
             this.updateUI();
         };
 
@@ -2042,20 +2063,45 @@ define('components/XTodoList',['require','xelement','components/XForm','componen
 
 
         proto.add = function (xtodos) {
-            // TODO: Filter stuff goes here
-            var self = this;
-            xtodos.forEach(function (xtodo) { self.xlist.add(xtodo); });
+            var filter = this.filter;
+            var filterKeys = Object.keys(filter);
+            var models = this.todoRepository.localModels.filter(function (model) {
+                return filterKeys.every(function (key) {
+                    return model.props[key] === filter[key];
+                });
+            });
+            var guids = models.map(function (model) { return model.guid; });
+            xtodos.forEach(function (xtodo) {
+                var guid = XElement.getTag(xtodo);
+                var doShow = guids.indexOf(guid) > -1;
+                this.xtodos.push(xtodo);
+                if (doShow) {
+                    this.xlist.add(xtodo);
+                }
+            }, this);
         };
 
 
         proto.remove = function (xtodos) {
-            var self = this;
-            xtodos.forEach(function (xtodo) { self.xlist.remove(xtodo); });
+            xtodos.forEach(function (xtodo) {
+                var i = this.xtodos.indexOf(xtodo);
+                if (i > -1) {
+                    this.xtodos.splice(i, 1);
+                }
+                this.xlist.remove(xtodo);
+            }, this);
         };
 
 
         proto.setFilter = function (filter) {
-            console.log(filter);
+            this.filter = filter;
+            this.updateList();
+        };
+
+
+        proto.updateList = function () {
+            this.xlist.empty();
+            this.add(this.xtodos.splice(0, this.xtodos.length));
         };
 
 
@@ -2071,8 +2117,9 @@ define('components/XTodoList',['require','xelement','components/XForm','componen
 
         proto.handleSubmit = function (e) {
             var todoModel = this.todoRepository.create(e.detail.request);
-            this.add([ this.createTodoFromModel(todoModel) ]);
+            this.xtodos.push(this.createTodoFromModel(todoModel));
             this.xform.reset();
+            this.updateList();
             this.updateUI();
         };
 
@@ -2080,6 +2127,7 @@ define('components/XTodoList',['require','xelement','components/XForm','componen
         proto.handleTodoStatusChange = function (e) {
             var guid = XElement.getTag(e.target);
             this.todoRepository.update(guid, { complete: e.target.checkbox.checked });
+            this.updateList();
             this.updateUI();
         };
 
@@ -2098,13 +2146,13 @@ define('components/XTodoList',['require','xelement','components/XForm','componen
 
 
         proto.handleCheckAllChange = function (e) {
-            var self = this;
             var complete = e.target.checked;
-            this.getComponents(XTodo).forEach(function (xtodo) {
+            this.xtodos.forEach(function (xtodo) {
                 var guid = XElement.getTag(xtodo);
                 xtodo.setState({ complete: complete });
-                self.todoRepository.update(guid, { complete: complete }); // TODO: This could be optimized by updating multiple models at once
-            });
+                this.todoRepository.update(guid, { complete: complete }); // TODO: This could be optimized by updating multiple models at once
+            }, this);
+            this.updateList();
             this.updateUI();
         };
 
@@ -2112,7 +2160,7 @@ define('components/XTodoList',['require','xelement','components/XForm','componen
         proto.handleClearCompletedClick = function () {
             var removed = this.todoRepository.deleteWhere({ complete: true });
             removed.forEach(function (model) {
-                this.remove([ this.getComponent(XTodo, model.guid) ]);
+                this.remove([ this.xtodos.find(function (xtodo) { return XElement.getTag(xtodo) === model.guid; }) ]);
             }, this);
             this.updateUI();
         };
@@ -2151,11 +2199,11 @@ define('components/App',['require','xelement','routie','components/XNav','compon
                     self.nav.setState({ page: this.path });
                 },
                 '/active': function () {
-                    self.todoList.setFilter({ completed: false });
+                    self.todoList.setFilter({ complete: false });
                     self.nav.setState({ page: this.path });
                 },
                 '/completed': function () {
-                    self.todoList.setFilter({ completed: true });
+                    self.todoList.setFilter({ complete: true });
                     self.nav.setState({ page: this.path });
                 }
             });
