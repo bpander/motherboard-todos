@@ -1,10 +1,10 @@
 define(function (require) {
     'use strict';
 
-    var XElement = require('xelement');
+    var M = require('motherboard');
 
 
-    return XElement.extend('ul', 'x-list', function (proto, base) {
+    return M.extend('ul', 'm-list', function (proto, base) {
 
 
         proto.createdCallback = function () {

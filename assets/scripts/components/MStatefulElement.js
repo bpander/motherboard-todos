@@ -1,10 +1,10 @@
 define(function (require) {
     'use strict';
 
-    var XElement = require('xelement');
+    var M = require('motherboard');
 
 
-    return XElement.define('x-stateful-element', function (proto, base) {
+    return M.element('m-stateful-element', function (proto, base) {
 
 
         var VAR_NAME = 'state';
@@ -24,7 +24,7 @@ define(function (require) {
 
         proto.customAttributes = [
 
-            XElement.attribute('props-attr', {
+            M.attribute('props-attr', {
                 type: String,
                 default: 'data-props'
             })

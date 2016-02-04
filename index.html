@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" is="x-app">
+<html lang="en" is="m-app">
 <head>
     <meta charset="utf-8" />
-    <title>XElement.js Todo List Demo</title>
+    <title>Motherboard.js Todo List Demo</title>
 
     <link rel="stylesheet" href="node_modules/todomvc-app-css/index.css" />
     <style type="text/css">
@@ -26,21 +26,21 @@
 <body>
 
     <section class="todoapp">
-        <x-todo-list data-tag="app.todoList">
-            <template data-tag="x-todo-list.todoTemplate">
-                <x-todo>
+        <m-todo-list data-tag="m-app.todoList">
+            <template data-tag="m-todo-list.todoTemplate">
+                <m-todo>
                     <div class="view">
-                        <input class="toggle" type="checkbox" data-props='{ checked: state.complete }' data-tag="x-todo.checkbox" />
-                        <label data-props='{ textContent: state.text }' data-tag="x-todo.label"></label>
-                        <button class="destroy" data-tag="x-todo.removalButton"></button>
+                        <input class="toggle" type="checkbox" data-props='{ checked: state.complete }' data-tag="m-todo.checkbox" />
+                        <label data-props='{ textContent: state.text }' data-tag="m-todo.label"></label>
+                        <button class="destroy" data-tag="m-todo.removalButton"></button>
                     </div>
-                    <input type="text" class="edit" data-tag="x-todo.editField" />
-                </x-todo>
+                    <input type="text" class="edit" data-tag="m-todo.editField" />
+                </m-todo>
             </template>
 
             <header class="header">
                 <h1>todos</h1>
-                <form is="x-form" data-tag="x-todo-list.xform" novalidate>
+                <form is="m-form" data-tag="m-todo-list.mform" novalidate>
                     <input class="new-todo" type="text" name="text" placeholder="What needs to be done?" required autocomplete="off" autofocus pattern=".*\S.*" />
                 </form>
             </header>
@@ -49,21 +49,21 @@
                     type="checkbox"
                     class="toggle-all hidden"
                     id="toggle-all"
-                    data-tag="TodosDispatcher:checkAllBox"
+                    data-tag="m-todo-list.checkAllBox"
                     data-props="{
                         className: (state.totalCount > 0) ? 'toggle-all' : 'hidden',
                         checked: state.completedCount === state.totalCount
                     }"
                 />
                 <label for="toggle-all">Mark all as complete</label>
-                <ul is="x-list" class="todo-list" data-tag="x-todo-list.xlist"></ul>
+                <ul is="m-list" class="todo-list" data-tag="m-todo-list.mlist"></ul>
             </section>
             <footer class="footer hidden" data-props="{ className: (state.totalCount > 0) ? 'footer' : 'hidden' }">
                 <span class="todo-count">
                     <strong data-props="{ textContent: state.totalCount - state.completedCount }">0</strong>
                     items left
                 </span>
-                <x-nav data-tag="app.nav" props-attr="data-nav-state">
+                <m-nav data-tag="m-app.nav" props-attr="data-nav-state">
                     <ul class="filters">
                         <li>
                             <a
@@ -84,20 +84,20 @@
                             >Completed</a>
                         </li>
                     </ul>
-                </x-nav>
+                </m-nav>
                 <button
                     class="clear-completed"
-                    data-tag="TodosDispatcher:clearCompletedButton"
+                    data-tag="m-todo-list.clearCompletedButton"
                     data-props="{ disabled: state.completedCount === 0 }"
                 >
                     Clear completed
                 </button>
             </footer>
-        </x-todo-list>
+        </m-todo-list>
     </section>
     <footer class="info">
         <p>Double-click to edit a todo</p>
-        <p>Written by <a href="https://github.com/bpander/xelement-todos">bpander</a></p>
+        <p>Written by <a href="https://github.com/bpander/motherboard-todos">bpander</a></p>
         <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
     </footer>
 

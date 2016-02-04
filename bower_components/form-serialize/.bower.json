@@ -21,7 +21,6 @@
     "commit": "5eb6158e99bc4652c2fb82a758a026a362ac762b"
   },
   "_source": "git://github.com/brettz9/form-serialize.git",
-  "_target": "^0.6.0",
-  "_originalSource": "form-serialize",
-  "_direct": true
+  "_target": "0.6.0",
+  "_originalSource": "form-serialize"
 }

@@ -1,21 +1,21 @@
 define(function (require) {
     'use strict';
 
-    var XElement = require('xelement');
+    var M = require('motherboard');
     var formSerialize = require('form-serialize');
 
 
-    return XElement.extend('form', 'x-form', function (proto, base) {
+    return M.extend('form', 'm-form', function (proto, base) {
 
 
         proto.EVENT = {
-            CUSTOM_SUBMIT: 'x-form.customsubmit'
+            CUSTOM_SUBMIT: 'm-form.customsubmit'
         };
 
 
         proto.createdCallback = function () {
             base.createdCallback.call(this);
-            this.createBinding(this, 'submit', proto.handleSubmit);
+            this.listen(this, 'submit', proto.handleSubmit);
             this.enable();
         };
 

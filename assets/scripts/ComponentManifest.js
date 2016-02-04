@@ -3,11 +3,11 @@ define(function (require) {
 
 
     return {
-        App: require('components/App'),
-        XForm: require('components/XForm'),
-        XList: require('components/XList'),
-        XNav: require('components/XNav'),
-        XTodo: require('components/XTodo'),
-        XTodoList: require('components/XTodoList')
+        MApp: require('components/MApp'),
+        MForm: require('components/MForm'),
+        MList: require('components/MList'),
+        MNav: require('components/MNav'),
+        MTodo: require('components/MTodo'),
+        MTodoList: require('components/MTodoList')
     };
 });

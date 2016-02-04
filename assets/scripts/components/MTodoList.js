@@ -1,15 +1,15 @@
 define(function (require) {
     'use strict';
 
-    var XElement = require('xelement');
-    var XForm = require('components/XForm');
-    var XList = require('components/XList');
-    var XStatefulElement = require('components/XStatefulElement');
-    var XTodo = require('components/XTodo');
+    var M = require('motherboard');
+    var MForm = require('components/MForm');
+    var MList = require('components/MList');
+    var MStatefulElement = require('components/MStatefulElement');
+    var MTodo = require('components/MTodo');
     var TodoRepository = require('repositories/TodoRepository');
 
 
-    return XElement.extend(XStatefulElement, 'x-todo-list', function (proto, base) {
+    return M.extend(MStatefulElement, 'm-todo-list', function (proto, base) {
 
 
         proto.createdCallback = function () {
@@ -22,44 +22,44 @@ define(function (require) {
 
             this.filter = {};
 
-            this.todoTemplate = this.findWithTag('x-todo-list.todoTemplate');
+            this.todoTemplate = this.findWithTag('m-todo-list.todoTemplate');
 
-            this.checkAllBox = this.findWithTag('TodosDispatcher:checkAllBox');
+            this.checkAllBox = this.findWithTag('m-todo-list.checkAllBox');
 
-            this.clearCompletedButton = this.findWithTag('TodosDispatcher:clearCompletedButton');
+            this.clearCompletedButton = this.findWithTag('m-todo-list.clearCompletedButton');
 
-            this.xform = this.getComponent(XForm, 'x-todo-list.xform');
+            this.mform = this.getComponent(MForm, 'm-todo-list.mform');
 
-            this.xlist = this.getComponent(XList, 'x-todo-list.xlist');
+            this.mlist = this.getComponent(MList, 'm-todo-list.mlist');
 
-            this.xtodos = [];
+            this.mtodos = [];
 
             this.todoRepository = new TodoRepository();
 
-            this.createBinding(this.checkAllBox, 'change', proto.handleCheckAllChange);
-            this.createBinding(this.clearCompletedButton, 'click', proto.handleClearCompletedClick);
-            this.createBinding(this.xform, this.xform.EVENT.CUSTOM_SUBMIT, proto.handleSubmit);
-            this.createBinding(this, XTodo.prototype.EVENT.STATUS_CHANGE, proto.handleTodoStatusChange);
-            this.createBinding(this, XTodo.prototype.EVENT.TEXT_CHANGE, proto.handleTodoTextChange);
-            this.createBinding(this, XTodo.prototype.EVENT.REMOVE, proto.handleTodoRemove);
+            this.listen(this.checkAllBox, 'change', proto.handleCheckAllChange);
+            this.listen(this.clearCompletedButton, 'click', proto.handleClearCompletedClick);
+            this.listen(this.mform, this.mform.EVENT.CUSTOM_SUBMIT, proto.handleSubmit);
+            this.listen(this, MTodo.prototype.EVENT.STATUS_CHANGE, proto.handleTodoStatusChange);
+            this.listen(this, MTodo.prototype.EVENT.TEXT_CHANGE, proto.handleTodoTextChange);
+            this.listen(this, MTodo.prototype.EVENT.REMOVE, proto.handleTodoRemove);
             this.enable();
 
             var models = this.todoRepository.fetch();
-            Array.prototype.push.apply(this.xtodos, models.map(function (todo) { return this.createTodoFromModel(todo); }, this));
+            Array.prototype.push.apply(this.mtodos, models.map(function (model) { return this.createTodoFromModel(model); }, this));
             this.updateUI();
         };
 
 
         proto.createTodoFromModel = function (model) {
             var docFrag = document.importNode(this.todoTemplate.content, true);
-            var xtodo = docFrag.querySelector(XTodo.prototype.selector);
-            XElement.setTag(xtodo, model.guid);
-            xtodo.setState(model.props);
-            return xtodo;
+            var mtodo = docFrag.querySelector(MTodo.prototype.selector);
+            M.setTag(mtodo, model.guid);
+            mtodo.setState(model.props);
+            return mtodo;
         };
 
 
-        proto.add = function (xtodos) {
+        proto.add = function (mtodos) {
             var filter = this.filter;
             var filterKeys = Object.keys(filter);
             var models = this.todoRepository.localModels.filter(function (model) {
@@ -68,24 +68,24 @@ define(function (require) {
                 });
             });
             var guids = models.map(function (model) { return model.guid; });
-            xtodos.forEach(function (xtodo) {
-                var guid = XElement.getTag(xtodo);
+            mtodos.forEach(function (mtodo) {
+                var guid = M.getTag(mtodo);
                 var doShow = guids.indexOf(guid) > -1;
-                this.xtodos.push(xtodo);
+                this.mtodos.push(mtodo);
                 if (doShow) {
-                    this.xlist.add(xtodo);
+                    this.mlist.add(mtodo);
                 }
             }, this);
         };
 
 
-        proto.remove = function (xtodos) {
-            xtodos.forEach(function (xtodo) {
-                var i = this.xtodos.indexOf(xtodo);
+        proto.remove = function (mtodos) {
+            mtodos.forEach(function (mtodo) {
+                var i = this.mtodos.indexOf(mtodo);
                 if (i > -1) {
-                    this.xtodos.splice(i, 1);
+                    this.mtodos.splice(i, 1);
                 }
-                this.xlist.remove(xtodo);
+                this.mlist.remove(mtodo);
             }, this);
         };
 
@@ -97,8 +97,8 @@ define(function (require) {
 
 
         proto.updateList = function () {
-            this.xlist.empty();
-            this.add(this.xtodos.splice(0, this.xtodos.length));
+            this.mlist.empty();
+            this.add(this.mtodos.splice(0, this.mtodos.length));
         };
 
 
@@ -114,15 +114,15 @@ define(function (require) {
 
         proto.handleSubmit = function (e) {
             var todoModel = this.todoRepository.create(e.detail.request);
-            this.xtodos.push(this.createTodoFromModel(todoModel));
-            this.xform.reset();
+            this.mtodos.push(this.createTodoFromModel(todoModel));
+            this.mform.reset();
             this.updateList();
             this.updateUI();
         };
 
 
         proto.handleTodoStatusChange = function (e) {
-            var guid = XElement.getTag(e.target);
+            var guid = M.getTag(e.target);
             this.todoRepository.update(guid, { complete: e.target.checkbox.checked });
             this.updateList();
             this.updateUI();
@@ -130,13 +130,13 @@ define(function (require) {
 
 
         proto.handleTodoTextChange = function (e) {
-            var guid = XElement.getTag(e.target);
+            var guid = M.getTag(e.target);
             this.todoRepository.update(guid, { text: e.detail.text });
         };
 
 
         proto.handleTodoRemove = function (e) {
-            this.todoRepository.delete(XElement.getTag(e.target));
+            this.todoRepository.delete(M.getTag(e.target));
             this.remove([ e.target ]);
             this.updateUI();
         };
@@ -144,9 +144,9 @@ define(function (require) {
 
         proto.handleCheckAllChange = function (e) {
             var complete = e.target.checked;
-            this.xtodos.forEach(function (xtodo) {
-                var guid = XElement.getTag(xtodo);
-                xtodo.setState({ complete: complete });
+            this.mtodos.forEach(function (mtodo) {
+                var guid = M.getTag(mtodo);
+                mtodo.setState({ complete: complete });
                 this.todoRepository.update(guid, { complete: complete }); // TODO: This could be optimized by updating multiple models at once
             }, this);
             this.updateList();
@@ -157,7 +157,7 @@ define(function (require) {
         proto.handleClearCompletedClick = function () {
             var removed = this.todoRepository.deleteWhere({ complete: true });
             removed.forEach(function (model) {
-                this.remove([ this.xtodos.find(function (xtodo) { return XElement.getTag(xtodo) === model.guid; }) ]);
+                this.remove([ this.mtodos.find(function (mtodo) { return M.getTag(mtodo) === model.guid; }) ]);
             }, this);
             this.updateUI();
         };

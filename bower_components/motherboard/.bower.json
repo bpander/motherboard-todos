@@ -1,11 +1,11 @@
 {
-  "name": "xelement",
-  "homepage": "https://github.com/banderso-n/xelement",
+  "name": "motherboard",
+  "homepage": "https://github.com/bpander/motherboard",
   "authors": [
     "Brad Anderson <banderso@nerdery.com>"
   ],
   "description": "",
-  "main": "XElement.js",
+  "main": "Motherboard.js",
   "moduleType": [],
   "license": "BSD",
   "ignore": [
@@ -22,14 +22,15 @@
     "webcomponentsjs": "0.7.20",
     "matchMedia": "matchmedia#0.3.0"
   },
-  "version": "0.1.5",
-  "_release": "0.1.5",
+  "version": "0.2.0",
+  "_release": "0.2.0",
   "_resolution": {
     "type": "version",
-    "tag": "0.1.5",
-    "commit": "1eff28cae84a384f2b2fb462d21b4c023a0e5ef8"
+    "tag": "0.2.0",
+    "commit": "6b17e44d3573b254d3638536eed9b4e2c25cd848"
   },
-  "_source": "git://github.com/bpander/xelement.git",
-  "_target": "0.1.5",
-  "_originalSource": "git://github.com/bpander/xelement.git"
+  "_source": "git://github.com/bpander/motherboard.git",
+  "_target": "~0.2.0",
+  "_originalSource": "motherboard",
+  "_direct": true
 }

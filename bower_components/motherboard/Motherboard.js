@@ -5,26 +5,26 @@
   } else if (typeof exports === 'object') {
     module.exports = factory();
   } else {
-    root['XElement'] = factory();
+    root['M'] = factory();
   }
 
 }(this, function () {
 
-var Binding, MediaDef, XElementMixin, utils_StringUtil, AttrDef, XElementjs;
-Binding = function () {
-  function Binding(target, type, handler) {
+var Listener, MediaDef, MElementMixin, utils_StringUtil, AttrDef, Motherboardjs;
+Listener = function () {
+  function Listener(target, type, handler) {
     this.target = target;
     this.type = type;
     this.handler = handler;
     this.isEnabled = false;
   }
-  Binding.prototype.enable = function () {
+  Listener.prototype.enable = function () {
     if (this.isEnabled === true) {
       return;
     }
     if (this.target instanceof EventTarget) {
       this.target.addEventListener(this.type, this.handler);
-    } else if (this.target instanceof NodeList) {
+    } else if (this.target instanceof Array) {
       var i = this.target.length;
       while (--i > -1) {
         this.target[i].addEventListener(this.type, this.handler);
@@ -32,10 +32,10 @@ Binding = function () {
     }
     this.isEnabled = true;
   };
-  Binding.prototype.disable = function () {
+  Listener.prototype.disable = function () {
     if (this.target instanceof EventTarget) {
       this.target.removeEventListener(this.type, this.handler);
-    } else if (this.target instanceof NodeList) {
+    } else if (this.target instanceof Array) {
       var i = this.target.length;
       while (--i > -1) {
         this.target[i].removeEventListener(this.type, this.handler);
@@ -43,7 +43,7 @@ Binding = function () {
     }
     this.isEnabled = false;
   };
-  return Binding;
+  return Listener;
 }();
 MediaDef = function () {
   function MediaDef(params) {
@@ -91,11 +91,11 @@ MediaDef = function () {
   };
   return MediaDef;
 }();
-XElementMixin = function (Binding, MediaDef) {
-  var XElementMixin = {
+MElementMixin = function (Listener, MediaDef) {
+  var MElementMixin = {
     customAttributes: [],
     createdCallback: function () {
-      this.bindings = [];
+      this.listeners = [];
       this.mediaDefs = this.customAttributes.filter(function (x) {
         return x.responsive === true;
       }).map(function (attrDef) {
@@ -137,6 +137,7 @@ XElementMixin = function (Binding, MediaDef) {
         attrDef.mediaChangedCallback.call(this, oldEvaluatedProp, newEvaluatedProp);
       }
     },
+    // TODO: Maybe refactor element queries to use getElementsByTagName? http://jsperf.com/exhaustive-selector-performance-test
     getComponent: function (T, tag) {
       var selector = T.prototype.selector;
       if (tag !== undefined) {
@@ -157,23 +158,23 @@ XElementMixin = function (Binding, MediaDef) {
     findAllWithTag: function (tag) {
       return _nodeListToArray(this.querySelectorAll('[data-tag="' + tag + '"]'));
     },
-    createBinding: function (target, type, handler) {
-      var binding = new Binding(target, type, handler.bind(this));
-      this.bindings.push(binding);
-      return binding;
+    listen: function (target, type, handler) {
+      var listener = new Listener(target, type, handler.bind(this));
+      this.listeners.push(listener);
+      return listener;
     },
     enable: function () {
       var i;
-      var l = this.bindings.length;
+      var l = this.listeners.length;
       for (i = 0; i < l; i++) {
-        this.bindings[i].enable();
+        this.listeners[i].enable();
       }
     },
     disable: function () {
       var i;
-      var l = this.bindings.length;
+      var l = this.listeners.length;
       for (i = 0; i < l; i++) {
-        this.bindings[i].disable();
+        this.listeners[i].disable();
       }
     },
     trigger: function (type, detail) {
@@ -193,8 +194,8 @@ XElementMixin = function (Binding, MediaDef) {
     }
     return arr;
   };
-  return XElementMixin;
-}(Binding, MediaDef);
+  return MElementMixin;
+}(Listener, MediaDef);
 utils_StringUtil = function () {
   var StringUtil = {};
   StringUtil.toCamelCase = function (str) {
@@ -340,21 +341,21 @@ AttrDef = function (StringUtil) {
   };
   return AttrDef;
 }(utils_StringUtil);
-XElementjs = function (XElementMixin, AttrDef) {
-  function XElement() {
+Motherboardjs = function (MElementMixin, AttrDef) {
+  function M() {
   }
-  XElement.attribute = function (name, params) {
+  M.attribute = function (name, params) {
     return new AttrDef(name, params);
   };
-  XElement.define = function (customTagName, definition) {
+  M.element = function (customTagName, definition) {
     var constructor = HTMLElement;
-    var base = Object.assign(Object.create(constructor.prototype), XElementMixin);
+    var base = Object.assign(Object.create(constructor.prototype), MElementMixin);
     var prototype = Object.create(base);
     Object.defineProperty(prototype, 'selector', { value: customTagName });
     definition(prototype, base);
     return _register(customTagName, { prototype: prototype });
   };
-  XElement.extend = function () {
+  M.extend = function () {
     if (typeof arguments[0] === 'string') {
       return _extendNative.apply(this, arguments);
     }
@@ -362,7 +363,7 @@ XElementjs = function (XElementMixin, AttrDef) {
   };
   var _extendNative = function (tagName, customTagName, definition) {
     var constructor = document.createElement(tagName).constructor;
-    var base = Object.assign(Object.create(constructor.prototype), XElementMixin);
+    var base = Object.assign(Object.create(constructor.prototype), MElementMixin);
     var prototype = Object.create(base);
     Object.defineProperty(prototype, 'selector', { value: tagName + '[is="' + customTagName + '"]' });
     definition(prototype, base);
@@ -398,12 +399,12 @@ XElementjs = function (XElementMixin, AttrDef) {
     // Register the custom element
     return document.registerElement(customTagName, options);
   };
-  XElement.setTag = function (element, tag) {
+  M.setTag = function (element, tag) {
     element.dataset.tag = tag;
   };
-  XElement.getTag = function (element) {
+  M.getTag = function (element) {
     return element.dataset.tag;
   };
-  return XElement;
-}(XElementMixin, AttrDef);    return XElementjs;
+  return M;
+}(MElementMixin, AttrDef);    return Motherboardjs;
 }));

@@ -16,9 +16,9 @@
     "tests"
   ],
   "dependencies": {
-    "xelement": "git://github.com/bpander/xelement.git#0.1.5",
     "routie": "0.3.2",
-    "form-serialize": "0.6.0"
+    "form-serialize": "0.6.0",
+    "motherboard": "0.2.0"
   },
   "devDependencies": {
     "requirejs": "2.1.22"

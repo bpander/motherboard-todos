@@ -3,20 +3,20 @@ define(function (require) {
 
     require('routie'); // requirejs shim + amdclean doesn't want to work with routie for some reason
     var routie = window.routie;
-    var XElement = require('xelement');
-    var XNav = require('components/XNav');
-    var XTodoList = require('components/XTodoList');
+    var M = require('motherboard');
+    var MNav = require('components/MNav');
+    var MTodoList = require('components/MTodoList');
 
 
-    return XElement.extend('html', 'x-app', function (proto, base) {
+    return M.extend('html', 'm-app', function (proto, base) {
 
 
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
-            this.todoList = this.getComponent(XTodoList, 'app.todoList');
+            this.todoList = this.getComponent(MTodoList, 'm-app.todoList');
 
-            this.nav = this.getComponent(XNav, 'app.nav');
+            this.nav = this.getComponent(MNav, 'm-app.nav');
 
             this.registerRoutes();
         };

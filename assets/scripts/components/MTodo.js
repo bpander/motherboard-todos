@@ -1,16 +1,16 @@
 define(function (require) {
     'use strict';
 
-    var XElement = require('xelement');
-    var XStatefulElement = require('components/XStatefulElement');
+    var M = require('motherboard');
+    var MStatefulElement = require('components/MStatefulElement');
 
 
-    return XElement.extend(XStatefulElement, 'x-todo', function (proto, base) {
+    return M.extend(MStatefulElement, 'm-todo', function (proto, base) {
 
 
         proto.customAttributes = [
 
-            XElement.attribute('editing-class', {
+            M.attribute('editing-class', {
                 type: String,
                 default: 'editing'
             })
@@ -19,9 +19,9 @@ define(function (require) {
 
 
         proto.EVENT = {
-            STATUS_CHANGE: 'x-todo.complete',
-            TEXT_CHANGE: 'x-todo.textchange',
-            REMOVE: 'x-todo.remove'
+            STATUS_CHANGE: 'm-todo.complete',
+            TEXT_CHANGE: 'm-todo.textchange',
+            REMOVE: 'm-todo.remove'
         };
 
 
@@ -33,17 +33,17 @@ define(function (require) {
                 text: ''
             };
 
-            this.checkbox = this.findWithTag('x-todo.checkbox');
+            this.checkbox = this.findWithTag('m-todo.checkbox');
 
-            this.editField = this.findWithTag('x-todo.editField');
+            this.editField = this.findWithTag('m-todo.editField');
 
-            this.label = this.findWithTag('x-todo.label');
+            this.label = this.findWithTag('m-todo.label');
 
-            this.blurBinding = this.createBinding(this.editField, 'blur', proto.handleEditFieldBlur);
-            this.createBinding(this.editField, 'keyup', proto.handleEditFieldBlur);
-            this.createBinding(this.checkbox, 'change', proto.handleCheckboxChange);
-            this.createBinding(this.label, 'dblclick', proto.handleLabelDblClick);
-            this.createBinding(this.findWithTag('x-todo.removalButton'), 'click', proto.handleRemovalButtonClick);
+            this.blurListener = this.listen(this.editField, 'blur', proto.handleEditFieldBlur);
+            this.listen(this.editField, 'keyup', proto.handleEditFieldBlur);
+            this.listen(this.checkbox, 'change', proto.handleCheckboxChange);
+            this.listen(this.label, 'dblclick', proto.handleLabelDblClick);
+            this.listen(this.findWithTag('m-todo.removalButton'), 'click', proto.handleRemovalButtonClick);
             this.enable();
         };
 
@@ -72,10 +72,10 @@ define(function (require) {
                     // Escaping will trigger a 'blur' (because the input is getting hid),
                     // and we don't want that to trigger the normal 'blur' behavior (saving).
                     // This is a quick and dirty way to temporarily disable normal 'blur' behavior
-                    this.blurBinding.disable();
+                    this.blurListener.disable();
                     this.parentElement.classList.remove(this.editingClass);
                     setTimeout(function () {
-                        this.blurBinding.enable();
+                        this.blurListener.enable();
                     }.bind(this), 10);
                     return;
                 }
@@ -84,7 +84,7 @@ define(function (require) {
                 }
             }
             if (this.editField.value.trim() === '') {
-                this.blurBinding.disable(); // Similar issue stated above
+                this.blurListener.disable(); // Similar issue stated above
                 this.trigger(this.EVENT.REMOVE);
                 return;
             }
