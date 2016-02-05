@@ -2,10 +2,10 @@ define(function (require) {
     'use strict';
 
     var M = require('motherboard');
-    var MStatefulElement = require('components/MStatefulElement');
+    var State = require('state');
 
 
-    return M.extend(MStatefulElement, 'm-todo', function (proto, base) {
+    return M.element('m-todo', function (proto, base) {
 
 
         proto.customAttributes = [
@@ -28,16 +28,16 @@ define(function (require) {
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
-            this.state = {
-                complete: false,
-                text: ''
-            };
-
             this.checkbox = this.findWithTag('m-todo.checkbox');
 
             this.editField = this.findWithTag('m-todo.editField');
 
             this.label = this.findWithTag('m-todo.label');
+
+            this.state = new State(
+                this.findAllWithTag('m-todo.state').concat(this.label, this.checkbox),
+                { complete: false, text: '' }
+            );
 
             this.blurListener = this.listen(this.editField, 'blur', proto.handleEditFieldBlur);
             this.listen(this.editField, 'keyup', proto.handleEditFieldBlur);

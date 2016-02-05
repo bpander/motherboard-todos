@@ -2,18 +2,18 @@ define(function (require) {
     'use strict';
 
     var M = require('motherboard');
-    var MStatefulElement = require('components/MStatefulElement');
+    var State = require('state');
 
 
-    return M.extend(MStatefulElement, 'm-nav', function (proto, base) {
+    return M.extend('nav', 'm-nav', function (proto, base) {
 
         proto.createdCallback = function () {
             base.createdCallback.call(this);
 
-            this.state = {
+            this.state = new State(this.findAllWithTag('m-nav.state'), {
                 selected: 'selected',
                 page: ''
-            };
+            });
 
         };
 

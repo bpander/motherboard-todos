@@ -1,0 +1,14 @@
+{
+  "name": "State.js",
+  "homepage": "https://github.com/bpander/State.js",
+  "version": "0.0.1",
+  "_release": "0.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.1",
+    "commit": "229b65456af92c10effd8b709c42f30528dc8089"
+  },
+  "_source": "git://github.com/bpander/State.js.git",
+  "_target": "0.0.1",
+  "_originalSource": "git://github.com/bpander/State.js.git"
+}

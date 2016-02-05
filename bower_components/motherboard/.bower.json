@@ -30,7 +30,6 @@
     "commit": "6b17e44d3573b254d3638536eed9b4e2c25cd848"
   },
   "_source": "git://github.com/bpander/motherboard.git",
-  "_target": "~0.2.0",
-  "_originalSource": "motherboard",
-  "_direct": true
+  "_target": "0.2.0",
+  "_originalSource": "motherboard"
 }

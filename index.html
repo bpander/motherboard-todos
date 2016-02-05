@@ -30,8 +30,16 @@
             <template data-tag="m-todo-list.todoTemplate">
                 <m-todo>
                     <div class="view">
-                        <input class="toggle" type="checkbox" data-props='{ checked: state.complete }' data-tag="m-todo.checkbox" />
-                        <label data-props='{ textContent: state.text }' data-tag="m-todo.label"></label>
+                        <input
+                            type="checkbox"
+                            class="toggle"
+                            data-tag="m-todo.checkbox"
+                            data-props="{ checked: state.complete }"
+                        />
+                        <label
+                            data-tag="m-todo.label"
+                            data-props='{ textContent: state.text }'
+                        ></label>
                         <button class="destroy" data-tag="m-todo.removalButton"></button>
                     </div>
                     <input type="text" class="edit" data-tag="m-todo.editField" />
@@ -58,33 +66,43 @@
                 <label for="toggle-all">Mark all as complete</label>
                 <ul is="m-list" class="todo-list" data-tag="m-todo-list.mlist"></ul>
             </section>
-            <footer class="footer hidden" data-props="{ className: (state.totalCount > 0) ? 'footer' : 'hidden' }">
+            <footer
+                class="footer hidden"
+                data-tag="m-todo-list.state"
+                data-props="{ className: (state.totalCount > 0) ? 'footer' : 'hidden' }"
+            >
                 <span class="todo-count">
-                    <strong data-props="{ textContent: state.totalCount - state.completedCount }">0</strong>
+                    <strong
+                        data-tag="m-todo-list.state"
+                        data-props="{ textContent: state.totalCount - state.completedCount }"
+                    >0</strong>
                     items left
                 </span>
-                <m-nav data-tag="m-app.nav" props-attr="data-nav-state">
+                <nav is="m-nav" data-tag="m-app.nav">
                     <ul class="filters">
                         <li>
                             <a
                                 href="#/"
-                                data-nav-state="{ className: (state.page === '') ? state.selected : '' }"
+                                data-tag="m-nav.state"
+                                data-props="{ className: (state.page === '') ? state.selected : '' }"
                             >All</a>
                         </li>
                         <li>
                             <a
                                 href="#/active"
-                                data-nav-state="{ className: (state.page === '/active') ? state.selected : '' }"
+                                data-tag="m-nav.state"
+                                data-props="{ className: (state.page === '/active') ? state.selected : '' }"
                             >Active</a>
                         </li>
                         <li>
                             <a
                                 href="#/completed"
-                                data-nav-state="{ className: (state.page === '/completed') ? state.selected : '' }"
+                                data-tag="m-nav.state"
+                                data-props="{ className: (state.page === '/completed') ? state.selected : '' }"
                             >Completed</a>
                         </li>
                     </ul>
-                </m-nav>
+                </nav>
                 <button
                     class="clear-completed"
                     data-tag="m-todo-list.clearCompletedButton"

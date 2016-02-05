@@ -27,15 +27,15 @@ define(function (require) {
             routie({
                 '': function () {
                     self.todoList.setFilter({});
-                    self.nav.setState({ page: this.path });
+                    self.nav.state.set({ page: this.path });
                 },
                 '/active': function () {
                     self.todoList.setFilter({ complete: false });
-                    self.nav.setState({ page: this.path });
+                    self.nav.state.set({ page: this.path });
                 },
                 '/completed': function () {
                     self.todoList.setFilter({ complete: true });
-                    self.nav.setState({ page: this.path });
+                    self.nav.state.set({ page: this.path });
                 }
             });
         };

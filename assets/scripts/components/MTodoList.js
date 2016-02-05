@@ -4,21 +4,16 @@ define(function (require) {
     var M = require('motherboard');
     var MForm = require('components/MForm');
     var MList = require('components/MList');
-    var MStatefulElement = require('components/MStatefulElement');
     var MTodo = require('components/MTodo');
+    var State = require('state');
     var TodoRepository = require('repositories/TodoRepository');
 
 
-    return M.extend(MStatefulElement, 'm-todo-list', function (proto, base) {
+    return M.element('m-todo-list', function (proto, base) {
 
 
         proto.createdCallback = function () {
             base.createdCallback.call(this);
-
-            this.state = {
-                totalCount: 0,
-                completedCount: 0
-            };
 
             this.filter = {};
 
@@ -31,6 +26,11 @@ define(function (require) {
             this.mform = this.getComponent(MForm, 'm-todo-list.mform');
 
             this.mlist = this.getComponent(MList, 'm-todo-list.mlist');
+
+            this.state = new State(
+                this.findAllWithTag('m-todo-list.state').concat(this.checkAllBox, this.clearCompletedButton),
+                { totalCount: 0, completedCount: 0 }
+            );
 
             this.mtodos = [];
 
@@ -54,7 +54,7 @@ define(function (require) {
             var docFrag = document.importNode(this.todoTemplate.content, true);
             var mtodo = docFrag.querySelector(MTodo.prototype.selector);
             M.setTag(mtodo, model.guid);
-            mtodo.setState(model.props);
+            mtodo.state.set(model.props);
             return mtodo;
         };
 
@@ -105,7 +105,7 @@ define(function (require) {
         proto.updateUI = function () {
             var todoModels = this.todoRepository.localModels;
             var totalCount = todoModels.length;
-            this.setState({
+            this.state.set({
                 totalCount: totalCount,
                 completedCount: todoModels.filter(function (model) { return model.props.complete; }).length
             });
@@ -146,7 +146,7 @@ define(function (require) {
             var complete = e.target.checked;
             this.mtodos.forEach(function (mtodo) {
                 var guid = M.getTag(mtodo);
-                mtodo.setState({ complete: complete });
+                mtodo.state.set({ complete: complete });
                 this.todoRepository.update(guid, { complete: complete }); // TODO: This could be optimized by updating multiple models at once
             }, this);
             this.updateList();
