@@ -17,19 +17,21 @@
     "src",
     "Gruntfile.js"
   ],
-  "devDependencies": {
-    "requirejs": "2.1.22",
+  "dependencies": {
     "webcomponentsjs": "0.7.20",
     "matchMedia": "matchmedia#0.3.0"
   },
-  "version": "0.2.0",
-  "_release": "0.2.0",
+  "devDependencies": {
+    "requirejs": "2.1.22"
+  },
+  "version": "0.3.0",
+  "_release": "0.3.0",
   "_resolution": {
     "type": "version",
-    "tag": "0.2.0",
-    "commit": "6b17e44d3573b254d3638536eed9b4e2c25cd848"
+    "tag": "0.3.0",
+    "commit": "53b0f866e0c49ceaa393b99db8e185c73c3cae6d"
   },
   "_source": "git://github.com/bpander/motherboard.git",
-  "_target": "0.2.0",
+  "_target": "0.3.0",
   "_originalSource": "motherboard"
 }

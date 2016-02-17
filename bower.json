@@ -18,7 +18,7 @@
   "dependencies": {
     "routie": "0.3.2",
     "form-serialize": "0.6.0",
-    "motherboard": "0.2.0",
+    "motherboard": "0.3.0",
     "State.js": "git://github.com/bpander/State.js.git#0.0.1"
   },
   "devDependencies": {
